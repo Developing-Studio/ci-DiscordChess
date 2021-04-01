@@ -1,4 +1,3 @@
-
 class ChessGame:
     white_pieces = "PBNRQK"
     black_pieces = "pbnrqk"
