@@ -11,3 +11,6 @@ noxmainnetwork = "*"
 
 [requires]
 python_version = "3.9"
+
+[scripts]
+bot = "python chessbot/chessbot.py"
