@@ -2,7 +2,7 @@ import os
 
 from discord.ext.commands import AutoShardedBot
 
-from ChessBot.utils import add_cogs
+from DiscordBot.utils import add_cogs
 
 bot = AutoShardedBot(command_prefix="%")
 

@@ -1,6 +1,6 @@
 from discord.ext.commands import AutoShardedBot
 
-from ChessBot.cogs import COGS
+from DiscordBot.cogs import COGS
 
 
 def add_cogs(bot: AutoShardedBot):
