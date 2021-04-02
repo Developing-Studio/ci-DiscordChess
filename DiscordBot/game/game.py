@@ -16,19 +16,21 @@ class Game:
 
     def create_emojis(self):
         string = ""
-        index: bool = True
+        index = True
         for row in self.chess.game.split()[0].split("/"):
-            for figure in numbers_to_dashes(row):
+            row = numbers_to_dashes(row)
+            for figure in row:
                 string += figure_to_emoji(figure, index)
                 index = not index
             string += "\n"
+            index = not index
 
         return string
 
     async def create_message(self, ctx: Context):
         embed = Embed(title=self.name, color=Colors.GAME_DARK)
         embed.description = self.create_emojis()
-        embed.add_field(name="Status", value="Your turn / waiting for AI")
+        embed.add_field(name="Who's turn?", value="White" if self.chess.get_turn() == "w" else "Black")
         message: Message = await ctx.send(embed=embed)
         self.id = message.id
         self.url = message.jump_url
