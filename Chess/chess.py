@@ -6,11 +6,29 @@ line_index = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7, "1
 
 def numbers_to_dashes(fen_line: str) -> str:
     output = ""
-    for item in list(fen_line):
+    for item in fen_line:
         if item in numbers.keys():
             output += "-" * numbers[item]
         else:
             output += item
+    return output
+
+
+def dashes_to_numbers(fen_line: str) -> str:
+    output = ""
+    number = 0
+    for item in fen_line:
+        if item == "-":
+            number += 1
+        else:
+            if number == 0:
+                output += item
+            else:
+                output += str(number)
+                output += item
+                number = 0
+    if number != 0:
+        output += str(number)
     return output
 
 
