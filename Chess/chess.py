@@ -175,30 +175,70 @@ class ChessGame:
         possible_moves_exacly_y = []
         if self.get_turn() == "w":
             pieces = white_pieces
+            opponent_pieces = black_pieces
         else:
             pieces = black_pieces
+            opponent_pieces = white_pieces
         position = "a1"
+
+        def check(pos: str, rx: int, ry: int, allowed: str):
+            rpos = relative_position(pos, rx, ry)
+            if (rpos != "-") and (self.get_position(rpos) in allowed):
+                possible_moves.append(rpos)
+                possible_moves_exacly_x.append(pos[0] + rpos)
+                possible_moves_exacly_y.append(pos[1] + rpos)
 
         for _ in range(64):
             figure = self.get_position(position)
             if figure in pieces:
                 if figure == "P":
-                    if self.get_position(relative_position(position, 0, 1)) == "-":
-                        possible_moves.append(relative_position(position, 0, 1))
-                        possible_moves_exacly_x.append(position[0] + relative_position(position, 0, 1))
-                        possible_moves_exacly_y.append(position[1] + relative_position(position, 0, 1))
+                    check(position, 0, 1, "-")
+                    check(position, 1, 1, opponent_pieces)
+                    check(position, -1, 1, opponent_pieces)
                 elif figure == "p":
-                    pass
+                    check(position, 0, -1, "-")
+                    check(position, 1, -1, opponent_pieces)
+                    check(position, -1, -1, opponent_pieces)
                 elif figure.lower() == "b":
-                    pass
+                    for item in range(1, 9):
+                        check(position, item, item, "-" + opponent_pieces)
+                        check(position, -item, item, "-" + opponent_pieces)
+                        check(position, item, -item, "-" + opponent_pieces)
+                        check(position, -item, -item, "-" + opponent_pieces)
                 elif figure.lower() == "n":
-                    pass
+                    check(position, 2, 1, "-" + opponent_pieces)
+                    check(position, 2, -1, "-" + opponent_pieces)
+                    check(position, -2, 1, "-" + opponent_pieces)
+                    check(position, -2, -1, "-" + opponent_pieces)
+                    check(position, 1, 2, "-" + opponent_pieces)
+                    check(position, -1, 2, "-" + opponent_pieces)
+                    check(position, 1, -2, "-" + opponent_pieces)
+                    check(position, -1, -2, "-" + opponent_pieces)
                 elif figure.lower() == "r":
-                    pass
+                    for item in range(1, 9):
+                        check(position, item, 0, "-" + opponent_pieces)
+                        check(position, -item, 0, "-" + opponent_pieces)
+                        check(position, 0, item, "-" + opponent_pieces)
+                        check(position, 0, -item, "-" + opponent_pieces)
                 elif figure.lower() == "q":
-                    pass
+                    for item in range(1, 9):
+                        check(position, item, item, "-" + opponent_pieces)
+                        check(position, -item, item, "-" + opponent_pieces)
+                        check(position, item, -item, "-" + opponent_pieces)
+                        check(position, -item, -item, "-" + opponent_pieces)
+                        check(position, item, 0, "-" + opponent_pieces)
+                        check(position, -item, 0, "-" + opponent_pieces)
+                        check(position, 0, item, "-" + opponent_pieces)
+                        check(position, 0, -item, "-" + opponent_pieces)
                 elif figure.lower() == "k":
-                    pass
+                    check(position, 1, 1, "-" + opponent_pieces)
+                    check(position, 0, 1, "-" + opponent_pieces)
+                    check(position, -1, 1, "-" + opponent_pieces)
+                    check(position, 1, 0, "-" + opponent_pieces)
+                    check(position, -1, 0, "-" + opponent_pieces)
+                    check(position, 1, -1, "-" + opponent_pieces)
+                    check(position, 0, -1, "-" + opponent_pieces)
+                    check(position, -1, -1, "-" + opponent_pieces)
             position = increase_position(position)
 
         return possible_moves
