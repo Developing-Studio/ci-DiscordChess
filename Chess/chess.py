@@ -271,7 +271,7 @@ class ChessGame:
 
     def move(self, move: str):
         if move in self.get_possible_moves():
-            #
+            # Test
 
             if self.get_turn() == "w":
                 self.set_turn("b")
