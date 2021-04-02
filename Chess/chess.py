@@ -80,10 +80,10 @@ class ChessGame:
     def set_position(self, position: str, to: str):
         new = self.game.split(" ")
         board = new[0].split("/")
-        line = list(board[line_index[position[1]]])
+        line = list(numbers_to_dashes(board[line_index[position[1]]]))
         line[line_index[position[0]]] = to
         board[line_index[position[1]]] = "".join(line)
-        new[0] = " ".join(board)
+        new[0] = "/".join(board)
         self.game = " ".join(new)
 
     def get_turn(self) -> str:
