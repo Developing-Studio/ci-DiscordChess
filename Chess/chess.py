@@ -45,8 +45,9 @@ class ChessGame:
         return self.game.split(" ")[1]
 
     def set_turn(self, to: str):
-        if to != self.get_turn():
-            self.game.replace(" " + self.get_turn() + " ", " " + to + " ", 1)
+        new = self.game.split(" ")
+        new[1] = to
+        self.game = " ".join(new)
 
     def get_white_can_castle_kingside(self) -> bool:
         if self.game.split(" ")[2].count("K") > 0:
@@ -88,25 +89,31 @@ class ChessGame:
         return self.game.split(" ")[3]
 
     def set_en_passant(self, to: str):
-        pass
+        new = self.game.split(" ")
+        new[3] = to
+        self.game = " ".join(new)
 
     def get_moves_since_pawn_move(self) -> int:
         return int(self.game.split(" ")[4])
 
     def set_moves_since_pawn_move(self, to: int):
-        pass
+        new = self.game.split(" ")
+        new[4] = str(to)
+        self.game = " ".join(new)
 
-    def increase_moves_since_pawn_move(self):
-        pass
+    def increase_moves_since_pawn_move(self, by: int = 1):
+        self.set_moves_since_pawn_move(self.get_moves_since_pawn_move() + by)
 
     def get_move_number(self) -> int:
         return int(self.game.split(" ")[5])
 
     def set_move_number(self, to: int):
-        pass
+        new = self.game.split(" ")
+        new[5] = str(to)
+        self.game = " ".join(new)
 
-    def increase_move_number(self):
-        pass
+    def increase_move_number(self, by: int = 1):
+        self.set_move_number(self.get_move_number() + by)
 
     def get_possible_moves(self) -> list:
         pass
