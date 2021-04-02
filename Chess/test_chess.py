@@ -22,7 +22,7 @@ print(numbers_to_dashes("2p2n2"))
 print(dashes_to_numbers("----p-Q-"))
 
 print()
-print(increase_position("h8"))
+print(increase_position("e1"))
 print(relative_position("e2", 0, -1))
 
 t = time()
