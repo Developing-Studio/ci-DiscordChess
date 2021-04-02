@@ -271,7 +271,12 @@ class ChessGame:
 
     def move(self, move: str):
         if move in self.get_possible_moves():
-            # Test
+            self.set_position(move[1:3], "-")
+            self.set_position(move[3:], move[0])
+            if move[0].lower() == "p":
+                self.set_moves_since_pawn_move(0)
+            else:
+                self.increase_moves_since_pawn_move()
 
             if self.get_turn() == "w":
                 self.set_turn("b")
