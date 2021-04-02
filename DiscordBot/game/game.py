@@ -1,8 +1,11 @@
 from typing import List
 
-from discord import Member
+from discord import Member, Embed, Message
+from discord.ext.commands import Context
 
 from Chess.chess import ChessGame
+from DiscordBot.color import Colors
+from DiscordBot.utils import figure_to_emoji
 
 
 class Game:
@@ -10,15 +13,36 @@ class Game:
         self.member = member
         self.name = name
         self.chess = ChessGame()
-        self.url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+
+    def create_emojis(self):
+        string = ""
+        for row in self.chess.game.split()[0].split("/"):
+            for figure in row:
+                if not figure.isdigit():
+                    string += figure_to_emoji(figure)
+                else:
+                    for i in range(int(figure)):
+                        string += " "
+            string += "\n"
+
+        return string
+
+    async def create_message(self, ctx: Context):
+        embed = Embed(title=self.name, color=Colors.GAME_DARK)
+        embed.description = self.create_emojis()
+        embed.add_field(name="Status", value="Your turn / waiting for AI")
+        message: Message = await ctx.send(embed=embed)
+        self.id = message.id
+        self.url = message.jump_url
 
     @staticmethod
-    def create(member: Member, name: str) -> "Game":
-        game: Game = Game(member, name)
-        if member.id not in games.keys():
-            games[member.id] = []
+    async def create(ctx: Context, name: str) -> "Game":
+        game: Game = Game(ctx.author, name)
+        if ctx.author.id not in games.keys():
+            games[ctx.author.id] = []
 
-        games[member.id].append(game)
+        games[ctx.author.id].append(game)
+        await game.create_message(ctx)
         return game
 
 

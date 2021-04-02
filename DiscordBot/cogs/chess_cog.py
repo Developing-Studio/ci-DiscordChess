@@ -40,11 +40,4 @@ class ChessCog(Cog):
 
     @game.command()
     async def create(self, ctx: Context, *, name: str = "Chess Game"):
-        game: Game = Game.create(ctx.author, name)
-
-        embed = Embed(color=Colors.GAME)
-        embed.description = "Created a new chess game"
-        embed.add_field(name="Name", value=game.name)
-        embed.add_field(name="Jump url", value="[Click here](" + game.url + ")")
-
-        await ctx.send(embed=embed)
+        await Game.create(ctx, name)
