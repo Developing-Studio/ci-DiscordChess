@@ -201,10 +201,17 @@ class ChessGame:
                     check(position, -1, -1, opponent_pieces)
                 elif figure.lower() == "b":
                     for item in range(1, 9):
-                        check(position, item, item, "-" + opponent_pieces)
-                        check(position, -item, item, "-" + opponent_pieces)
-                        check(position, item, -item, "-" + opponent_pieces)
-                        check(position, -item, -item, "-" + opponent_pieces)
+                        if not check(position, item, item, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check(position, -item, item, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check(position, item, -item, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check(position, -item, -item, "-" + opponent_pieces):
+                            break
                 elif figure.lower() == "n":
                     check(position, 2, 1, "-" + opponent_pieces)
                     check(position, 2, -1, "-" + opponent_pieces)
