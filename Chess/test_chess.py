@@ -19,3 +19,7 @@ print_fen("r1bqkb1r/pp2pppp/2p2n2/2nP4/2P1B3/8/PP1P1PPP/RNBQK1NR w KQkq - 5 6")
 print()
 print(numbers_to_dashes("2p2n2"))
 print(dashes_to_numbers("----p-Q-"))
+
+print()
+print(increase_position("h8"))
+print(relative_position("e2", 0, -1))

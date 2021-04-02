@@ -2,6 +2,8 @@ white_pieces = "PBNRQK"
 black_pieces = "pbnrqk"
 numbers = {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8}
 line_index = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7, "1": 7, "2": 6, "3": 5, "4": 4, "5": 3, "6": 2, "7": 1, "8": 0}
+next_line = {"a": "b", "b": "c", "c": "d", "d": "e", "e": "f", "f": "g", "g": "h", "h": "a"}
+previous_line = {"a": "h", "b": "a", "c": "b", "d": "c", "e": "d", "f": "e", "g": "f", "h": "g"}
 
 
 def numbers_to_dashes(fen_line: str) -> str:
@@ -47,8 +49,31 @@ def castle_bools_to_letters(wk: bool, wq: bool, bk: bool, bq: bool) -> str:
     return output
 
 
+def increase_position(position: str, by: int = 1) -> str:
+    for _ in range(by):
+        if position[1] == "8":
+            position = next_line[position[0]] + "1"
+        else:
+            position = position[0] + str(int(position[1]) + 1)
+    return position
+
+
+def relative_position(position: str, relative_x: int, relative_y: int) -> str:
+    if (0 <= (line_index[position[0]] + relative_x) <= 7) and (0 <= (7 - line_index[position[1]] + relative_y) <= 7):
+        for _ in range(abs(relative_x)):
+            if relative_x > 0:
+                position = next_line[position[0]] + position[1]
+            else:
+                position = previous_line[position[0]] + position[1]
+        position = position[0] + str(int(position[1]) + relative_y)
+        return position
+    else:
+        return "-"
+
+
 class ChessGame:
     game = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    pgn = "1. "
 
     def get_position(self, position: str) -> str:
         return numbers_to_dashes(self.game.split(" ")[0].split("/")[line_index[position[1]]])[line_index[position[0]]]
@@ -145,7 +170,38 @@ class ChessGame:
         self.set_move_number(self.get_move_number() + by)
 
     def get_possible_moves(self) -> list:
-        pass
+        possible_moves = []
+        possible_moves_exacly_x = []
+        possible_moves_exacly_y = []
+        if self.get_turn() == "w":
+            pieces = white_pieces
+        else:
+            pieces = black_pieces
+        position = "a1"
+
+        for _ in range(64):
+            figure = self.get_position(position)
+            if figure in pieces:
+                if figure == "P":
+                    if self.get_position(relative_position(position, 0, 1)) == "-":
+                        possible_moves.append(relative_position(position, 0, 1))
+                        possible_moves_exacly_x.append(position[0] + relative_position(position, 0, 1))
+                        possible_moves_exacly_y.append(position[1] + relative_position(position, 0, 1))
+                elif figure == "p":
+                    pass
+                elif figure.lower() == "b":
+                    pass
+                elif figure.lower() == "n":
+                    pass
+                elif figure.lower() == "r":
+                    pass
+                elif figure.lower() == "q":
+                    pass
+                elif figure.lower() == "k":
+                    pass
+            position = increase_position(position)
+
+        return possible_moves
 
     def move(self, move: str):
         if move in self.get_possible_moves():
@@ -155,3 +211,4 @@ class ChessGame:
                 self.set_turn("b")
             else:
                 self.set_turn("w")
+                self.increase_move_number()
