@@ -32,6 +32,21 @@ def dashes_to_numbers(fen_line: str) -> str:
     return output
 
 
+def castle_bools_to_letters(wk: bool, wq: bool, bk: bool, bq: bool) -> str:
+    output = ""
+    if wk:
+        output += "K"
+    if wq:
+        output += "Q"
+    if bk:
+        output += "k"
+    if bq:
+        output += "q"
+    if output == "":
+        output = "-"
+    return output
+
+
 class ChessGame:
     game = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
@@ -56,7 +71,9 @@ class ChessGame:
             return False
 
     def set_white_can_castle_kingside(self, to: bool):
-        pass
+        new = self.game.split(" ")
+        new[2] = castle_bools_to_letters(to, self.get_white_can_castle_queenside(), self.get_black_can_castle_kingside(), self.get_black_can_castle_queenside())
+        self.game = " ".join(new)
 
     def get_white_can_castle_queenside(self) -> bool:
         if self.game.split(" ")[2].count("Q") > 0:
@@ -65,7 +82,9 @@ class ChessGame:
             return False
 
     def set_white_can_castle_queenside(self, to: bool):
-        pass
+        new = self.game.split(" ")
+        new[2] = castle_bools_to_letters(self.get_white_can_castle_kingside(), to, self.get_black_can_castle_kingside(), self.get_black_can_castle_queenside())
+        self.game = " ".join(new)
 
     def get_black_can_castle_kingside(self) -> bool:
         if self.game.split(" ")[2].count("k") > 0:
@@ -74,7 +93,9 @@ class ChessGame:
             return False
 
     def set_black_can_castle_kingside(self, to: bool):
-        pass
+        new = self.game.split(" ")
+        new[2] = castle_bools_to_letters(self.get_white_can_castle_kingside(), self.get_white_can_castle_queenside(), to, self.get_black_can_castle_queenside())
+        self.game = " ".join(new)
 
     def get_black_can_castle_queenside(self) -> bool:
         if self.game.split(" ")[2].count("q") > 0:
@@ -83,7 +104,9 @@ class ChessGame:
             return False
 
     def set_black_can_castle_queenside(self, to: bool):
-        pass
+        new = self.game.split(" ")
+        new[2] = castle_bools_to_letters(self.get_white_can_castle_kingside(), self.get_white_can_castle_queenside(), self.get_black_can_castle_kingside(), to)
+        self.game = " ".join(new)
 
     def get_en_passant(self) -> str:
         return self.game.split(" ")[3]
