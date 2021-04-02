@@ -1,4 +1,5 @@
 from Chess.chess import *
+from time import time
 
 letters = "pbnrqkPBNRQK-"
 symbols = "♟♝♞♜♛♚♙♗♘♖♕♔ "
@@ -23,3 +24,7 @@ print(dashes_to_numbers("----p-Q-"))
 print()
 print(increase_position("h8"))
 print(relative_position("e2", 0, -1))
+
+t = time()
+print(g.get_possible_moves())
+print(time() - t)

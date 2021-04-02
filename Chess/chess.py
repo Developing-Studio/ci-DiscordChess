@@ -181,78 +181,103 @@ class ChessGame:
             opponent_pieces = white_pieces
         position = "a1"
 
-        def check(pos: str, rx: int, ry: int, allowed: str):
-            rpos = relative_position(pos, rx, ry)
+        def check(letter: str, rx: int, ry: int, allowed: str):
+            rpos = relative_position(position, rx, ry)
             if (rpos != "-") and (self.get_position(rpos) in allowed):
-                possible_moves.append(rpos)
-                possible_moves_exacly_x.append(pos[0] + rpos)
-                possible_moves_exacly_y.append(pos[1] + rpos)
+                possible_moves.append(letter + rpos)
+                possible_moves_exacly_x.append(letter + position[0] + rpos)
+                possible_moves_exacly_y.append(letter + position[1] + rpos)
+                return True
+            else:
+                return False
 
         for _ in range(64):
             figure = self.get_position(position)
             if figure in pieces:
                 if figure == "P":
-                    check(position, 0, 1, "-")
-                    check(position, 1, 1, opponent_pieces)
-                    check(position, -1, 1, opponent_pieces)
+                    check("", 0, 1, "-")
+                    check("", 1, 1, opponent_pieces)
+                    check("", -1, 1, opponent_pieces)
                 elif figure == "p":
-                    check(position, 0, -1, "-")
-                    check(position, 1, -1, opponent_pieces)
-                    check(position, -1, -1, opponent_pieces)
+                    check("", 0, -1, "-")
+                    check("", 1, -1, opponent_pieces)
+                    check("", -1, -1, opponent_pieces)
                 elif figure.lower() == "b":
                     for item in range(1, 9):
-                        if not check(position, item, item, "-" + opponent_pieces):
+                        if not check("B", item, item, "-" + opponent_pieces):
                             break
                     for item in range(1, 9):
-                        if not check(position, -item, item, "-" + opponent_pieces):
+                        if not check("B", -item, item, "-" + opponent_pieces):
                             break
                     for item in range(1, 9):
-                        if not check(position, item, -item, "-" + opponent_pieces):
+                        if not check("B", item, -item, "-" + opponent_pieces):
                             break
                     for item in range(1, 9):
-                        if not check(position, -item, -item, "-" + opponent_pieces):
+                        if not check("B", -item, -item, "-" + opponent_pieces):
                             break
                 elif figure.lower() == "n":
-                    check(position, 2, 1, "-" + opponent_pieces)
-                    check(position, 2, -1, "-" + opponent_pieces)
-                    check(position, -2, 1, "-" + opponent_pieces)
-                    check(position, -2, -1, "-" + opponent_pieces)
-                    check(position, 1, 2, "-" + opponent_pieces)
-                    check(position, -1, 2, "-" + opponent_pieces)
-                    check(position, 1, -2, "-" + opponent_pieces)
-                    check(position, -1, -2, "-" + opponent_pieces)
+                    check("N", 2, 1, "-" + opponent_pieces)
+                    check("N", 2, -1, "-" + opponent_pieces)
+                    check("N", -2, 1, "-" + opponent_pieces)
+                    check("N", -2, -1, "-" + opponent_pieces)
+                    check("N", 1, 2, "-" + opponent_pieces)
+                    check("N", -1, 2, "-" + opponent_pieces)
+                    check("N", 1, -2, "-" + opponent_pieces)
+                    check("N", -1, -2, "-" + opponent_pieces)
                 elif figure.lower() == "r":
                     for item in range(1, 9):
-                        check(position, item, 0, "-" + opponent_pieces)
-                        check(position, -item, 0, "-" + opponent_pieces)
-                        check(position, 0, item, "-" + opponent_pieces)
-                        check(position, 0, -item, "-" + opponent_pieces)
+                        if not check("R", item, 0, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check("R", -item, 0, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check("R", 0, item, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check("R", 0, -item, "-" + opponent_pieces):
+                            break
                 elif figure.lower() == "q":
                     for item in range(1, 9):
-                        check(position, item, item, "-" + opponent_pieces)
-                        check(position, -item, item, "-" + opponent_pieces)
-                        check(position, item, -item, "-" + opponent_pieces)
-                        check(position, -item, -item, "-" + opponent_pieces)
-                        check(position, item, 0, "-" + opponent_pieces)
-                        check(position, -item, 0, "-" + opponent_pieces)
-                        check(position, 0, item, "-" + opponent_pieces)
-                        check(position, 0, -item, "-" + opponent_pieces)
+                        if not check("Q", item, item, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check("Q", -item, item, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check("Q", item, -item, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check("Q", -item, -item, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check("Q", item, 0, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check("Q", -item, 0, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check("Q", 0, item, "-" + opponent_pieces):
+                            break
+                    for item in range(1, 9):
+                        if not check("Q", 0, -item, "-" + opponent_pieces):
+                            break
                 elif figure.lower() == "k":
-                    check(position, 1, 1, "-" + opponent_pieces)
-                    check(position, 0, 1, "-" + opponent_pieces)
-                    check(position, -1, 1, "-" + opponent_pieces)
-                    check(position, 1, 0, "-" + opponent_pieces)
-                    check(position, -1, 0, "-" + opponent_pieces)
-                    check(position, 1, -1, "-" + opponent_pieces)
-                    check(position, 0, -1, "-" + opponent_pieces)
-                    check(position, -1, -1, "-" + opponent_pieces)
+                    check("K", 1, 1, "-" + opponent_pieces)
+                    check("K", 0, 1, "-" + opponent_pieces)
+                    check("K", -1, 1, "-" + opponent_pieces)
+                    check("K", 1, 0, "-" + opponent_pieces)
+                    check("K", -1, 0, "-" + opponent_pieces)
+                    check("K", 1, -1, "-" + opponent_pieces)
+                    check("K", 0, -1, "-" + opponent_pieces)
+                    check("K", -1, -1, "-" + opponent_pieces)
             position = increase_position(position)
 
         return possible_moves
 
     def move(self, move: str):
         if move in self.get_possible_moves():
-            # Test
+            #
 
             if self.get_turn() == "w":
                 self.set_turn("b")
