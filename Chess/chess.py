@@ -38,51 +38,81 @@ class ChessGame:
     def get_position(self, position: str) -> str:
         return numbers_to_dashes(self.game.split(" ")[0].split("/")[line_index[position[1]]])[line_index[position[0]]]
 
+    def set_position(self, position: str, to: str):
+        pass
+
     def get_turn(self) -> str:
         return self.game.split(" ")[1]
 
-    def set_turn(self, turn: str):
-        if turn != self.get_turn():
-            self.game.replace(" " + self.get_turn() + " ", " " + turn + " ", 1)
+    def set_turn(self, to: str):
+        if to != self.get_turn():
+            self.game.replace(" " + self.get_turn() + " ", " " + to + " ", 1)
 
-    def white_can_castle_kingside(self) -> bool:
+    def get_white_can_castle_kingside(self) -> bool:
         if self.game.split(" ")[2].count("K") > 0:
             return True
         else:
             return False
 
-    def white_can_castle_queenside(self) -> bool:
+    def set_white_can_castle_kingside(self, to: bool):
+        pass
+
+    def get_white_can_castle_queenside(self) -> bool:
         if self.game.split(" ")[2].count("Q") > 0:
             return True
         else:
             return False
 
-    def black_can_castle_kingside(self) -> bool:
+    def set_white_can_castle_queenside(self, to: bool):
+        pass
+
+    def get_black_can_castle_kingside(self) -> bool:
         if self.game.split(" ")[2].count("k") > 0:
             return True
         else:
             return False
 
-    def black_can_castle_queenside(self) -> bool:
+    def set_black_can_castle_kingside(self, to: bool):
+        pass
+
+    def get_black_can_castle_queenside(self) -> bool:
         if self.game.split(" ")[2].count("q") > 0:
             return True
         else:
             return False
 
-    def en_passant(self) -> str:
+    def set_black_can_castle_queenside(self, to: bool):
+        pass
+
+    def get_en_passant(self) -> str:
         return self.game.split(" ")[3]
 
-    def moves_since_pawn_move(self) -> int:
+    def set_en_passant(self, to: str):
+        pass
+
+    def get_moves_since_pawn_move(self) -> int:
         return int(self.game.split(" ")[4])
 
-    def move_number(self) -> int:
+    def set_moves_since_pawn_move(self, to: int):
+        pass
+
+    def increase_moves_since_pawn_move(self):
+        pass
+
+    def get_move_number(self) -> int:
         return int(self.game.split(" ")[5])
 
-    def possible_moves(self) -> list:
+    def set_move_number(self, to: int):
+        pass
+
+    def increase_move_number(self):
+        pass
+
+    def get_possible_moves(self) -> list:
         pass
 
     def move(self, move: str):
-        if move in self.possible_moves():
+        if move in self.get_possible_moves():
             #
 
             if self.get_turn() == "w":
