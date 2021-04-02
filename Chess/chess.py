@@ -54,7 +54,13 @@ class ChessGame:
         return numbers_to_dashes(self.game.split(" ")[0].split("/")[line_index[position[1]]])[line_index[position[0]]]
 
     def set_position(self, position: str, to: str):
-        pass
+        new = self.game.split(" ")
+        board = new[0].split("/")
+        line = list(board[line_index[position[1]]])
+        line[line_index[position[0]]] = to
+        board[line_index[position[1]]] = "".join(line)
+        new[0] = " ".join(board)
+        self.game = " ".join(new)
 
     def get_turn(self) -> str:
         return self.game.split(" ")[1]
