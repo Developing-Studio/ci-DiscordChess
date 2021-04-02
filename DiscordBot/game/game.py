@@ -3,7 +3,7 @@ from typing import List
 from discord import Member, Embed, Message
 from discord.ext.commands import Context
 
-from Chess.chess import ChessGame
+from Chess.chess import ChessGame, numbers_to_dashes
 from DiscordBot.color import Colors
 from DiscordBot.utils import figure_to_emoji
 
@@ -16,13 +16,11 @@ class Game:
 
     def create_emojis(self):
         string = ""
+        index: bool = True
         for row in self.chess.game.split()[0].split("/"):
-            for figure in row:
-                if not figure.isdigit():
-                    string += figure_to_emoji(figure)
-                else:
-                    for i in range(int(figure)):
-                        string += " "
+            for figure in numbers_to_dashes(row):
+                string += figure_to_emoji(figure, index)
+                index = not index
             string += "\n"
 
         return string
