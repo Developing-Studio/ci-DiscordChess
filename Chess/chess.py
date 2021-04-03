@@ -283,22 +283,27 @@ class ChessGame:
         possible_moves = []
         opponent_pieces = black_pieces if self.get_turn() == "w" else white_pieces
 
-        def check(rx: int, ry: int, allowed: str):
+        def check(rx: int, ry: int, allowed: str, en_passent: bool = False):
             rposition = relative_position(figure[1:], rx, ry)
-            if (rposition != "-") and (self.get_position(rposition) in allowed):
-                possible_moves.append(figure[0] + figure[1:] + rposition)
+            if (rposition != "-") and en_passent and (rposition == self.get_en_passant()):
+                possible_moves.append(figure + rposition)
+                return True
+            elif (rposition != "-") and (self.get_position(rposition) in allowed):
+                possible_moves.append(figure + rposition)
                 return True
             else:
                 return False
 
         if figure[0] == "P":
-            check(0, 1, "-")
-            check(1, 1, opponent_pieces)
-            check(-1, 1, opponent_pieces)
+            if check(0, 1, "-") and (figure[2] == "2"):
+                check(0, 2, "-")
+            check(1, 1, opponent_pieces, en_passent=True)
+            check(-1, 1, opponent_pieces, en_passent=True)
         elif figure[0] == "p":
-            check(0, -1, "-")
-            check(1, -1, opponent_pieces)
-            check(-1, -1, opponent_pieces)
+            if check(0, -1, "-") and (figure[2] == "7"):
+                check(0, -2, "-")
+            check(1, -1, opponent_pieces, en_passent=True)
+            check(-1, -1, opponent_pieces, en_passent=True)
         elif figure[0].lower() == "b":
             for item in range(1, 9):
                 if not check(item, item, "-" + opponent_pieces):
