@@ -2,7 +2,7 @@ from discord import Embed
 from discord.ext.commands import Cog, AutoShardedBot, Context, group
 
 from DiscordBot.color import Colors
-from DiscordBot.game.game import Game, get_games, get_game
+from DiscordBot.game.game import Game, get_games
 
 
 class ChessCog(Cog):
@@ -23,19 +23,6 @@ class ChessCog(Cog):
             inline=False
         )
         embed.add_field(name=":boom: Score", value="42", inline=False)
-        await ctx.send(embed=embed)
-
-    @game.command()
-    async def show(self, ctx: Context, *, name: str):
-        game: Game = get_game(ctx.author, name)
-        if not game:
-            embed = Embed(description="The game `{}` does not exists!".format(name), color=Colors.ERROR)
-            await ctx.send(embed=embed)
-            return
-
-        embed = Embed(title="Game information", color=Colors.GAME_LIGHT)
-        embed.add_field(name="Name", value=game.name)
-        embed.add_field(name="Jump url", value="[Click here](" + game.url + ")")
         await ctx.send(embed=embed)
 
     @game.command()
