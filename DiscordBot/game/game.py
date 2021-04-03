@@ -83,6 +83,13 @@ def get_games(member: Member) -> List[Game]:
     return games[member.id] if member.id in games.keys() else []
 
 
+def get_game_by_message_id(id: int) -> Game:
+    for l in games.values():
+        for game in l:
+            if game.id == id:
+                return game
+
+
 def get_game(member: Member, name: str) -> Game:
     gms: List[Game] = get_games(member)
     l = [i for i in gms if i.name == name]
