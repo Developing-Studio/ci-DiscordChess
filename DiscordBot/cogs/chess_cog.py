@@ -28,3 +28,7 @@ class ChessCog(Cog):
     @game.command()
     async def create(self, ctx: Context, challenge: Member, *, name: str = "Chess Game"):
         await Game.create(ctx, challenge, name)
+
+    @game.command()
+    async def load(self, ctx: Context, challenge: Member, fen: str, name: str = "Chess Game"):
+        await Game.create(ctx, challenge, name, fen)
