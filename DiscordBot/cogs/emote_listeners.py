@@ -23,6 +23,11 @@ class EmoteCog(Cog):
         if game.get_current_member().id != member.id:
             await message.remove_reaction(reaction, member)
             return
+
+        if reaction.emoji == "❌":
+            await game.give_up()
+            return
+
         if game.move_state == MoveState.SELECT_FIGURE:
             game.move_state = MoveState.SELECT_FIGURE_ROW
             await game.update_reactions(selected_figure=reaction.emoji.name[0])

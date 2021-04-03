@@ -32,6 +32,18 @@ class Game:
         self.selected_position = ""
         self.move_to = ""
 
+    async def give_up(self):
+        await self.message.clear_reactions()
+        game: Game = self
+        remove_game(game)
+        await self.update_message([
+            {
+                "name": "Game over!",
+                "value": "__Cause__: surrendered by " + (self.m1 if self.chess.get_turn() == "w" else self.m2).mention,
+                "inline": False
+            }
+        ])
+
     async def update_reactions(self, *, selected_figure: str = "", select_figure_row: str = "",
                                selected_figure_col: str = "", select_move_row: str = "", select_move_col: str = ""):
         await self.message.clear_reactions()
@@ -46,6 +58,7 @@ class Game:
             ])
             for i in self.chess.get_remaining_movable_letters():
                 await self.message.add_reaction(figure_to_emoji(i, 3))
+            await self.message.add_reaction("❌")
 
         elif self.move_state == MoveState.SELECT_FIGURE_ROW:
             rows = self.chess.get_rows_containing_movable_figure(selected_figure)
@@ -65,6 +78,7 @@ class Game:
             ])
             for row in rows:
                 await self.message.add_reaction(letter_to_emoji(row))
+            await self.message.add_reaction("❌")
 
         elif self.move_state == MoveState.SELECT_FIGURE_COLUMN:
             self.selected_position = select_figure_row
@@ -85,6 +99,7 @@ class Game:
             ])
             for col in cols:
                 await self.message.add_reaction(number_to_emoji(col))
+            await self.message.add_reaction("❌")
 
         elif self.move_state == MoveState.SELECT_MOVE_POSITION_ROW:
             self.selected_position += selected_figure_col
@@ -110,6 +125,7 @@ class Game:
             ])
             for row in rows:
                 await self.message.add_reaction(letter_to_emoji(row))
+            await self.message.add_reaction("❌")
         elif self.move_state == MoveState.SELECT_MOVE_POSITION_COLUMN:
             self.move_to += select_move_row
             cols = self.chess.get_figure_possible_moves_lines_in_row(self.selected_figure + self.selected_position,
@@ -133,6 +149,7 @@ class Game:
             ])
             for col in cols:
                 await self.message.add_reaction(number_to_emoji(col))
+            await self.message.add_reaction("❌")
         elif self.move_state == MoveState.EXEC_MOVE:
             self.move_to += select_move_col
             self.chess.move(self.selected_figure + self.selected_position + self.move_to)
@@ -231,3 +248,8 @@ def get_game(member: Member, name: str) -> Game:
     gms: List[Game] = get_games(member)
     l = [i for i in gms if i.name == name]
     return l[0] if l else None
+
+
+def remove_game(game: Game):
+    for m in games.keys():
+        games[m].remove(game)
