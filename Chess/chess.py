@@ -182,7 +182,7 @@ class ChessGame:
         return remaining_figures
 
     def get_remaining_figures_letters(self) -> list:
-        pass
+        return list(set(map(lambda x: x[0], self.get_remaining_figures())))
 
     def get_remaining_movable_figures(self) -> list:
         remaining_movable_figures = []
@@ -192,7 +192,7 @@ class ChessGame:
         return remaining_movable_figures
 
     def get_remaining_movable_figures_letters(self) -> list:
-        pass
+        return list(set(map(lambda x: x[0], self.get_remaining_movable_figures())))
 
     def get_possible_moves(self) -> list:
         possible_moves = []
