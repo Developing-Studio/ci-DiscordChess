@@ -6,6 +6,22 @@ next_line = {"a": "b", "b": "c", "c": "d", "d": "e", "e": "f", "f": "g", "g": "h
 previous_line = {"a": "h", "b": "a", "c": "b", "d": "c", "e": "d", "f": "e", "g": "f", "h": "g"}
 
 
+def letter_to_name(letter: str) -> str:
+    color = "White " if letter in white_pieces else "Black "
+    if letter.lower() == "p":
+        return color + "pawn"
+    if letter.lower() == "b":
+        return color + "bishop"
+    if letter.lower() == "n":
+        return color + "knight"
+    if letter.lower() == "r":
+        return color + "rook"
+    if letter.lower() == "q":
+        return color + "queen"
+    if letter.lower() == "k":
+        return color + "king"
+
+
 def numbers_to_dashes(fen_line: str) -> str:
     output = ""
     for item in fen_line:
@@ -73,6 +89,7 @@ def relative_position(position: str, relative_x: int, relative_y: int) -> str:
 
 class ChessGame:
     game = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    log = "1. "
 
     def get_position(self, position: str) -> str:
         return numbers_to_dashes(self.game.split(" ")[0].split("/")[line_index[position[1]]])[line_index[position[0]]]
@@ -339,6 +356,8 @@ class ChessGame:
         if move in self.get_all_possible_moves():
             self.set_position(move[1:3], "-")
             self.set_position(move[3:], move[0])
+            self.log += str(self.get_move_number()) + ". " if self.get_turn() == "w"
+            self.log += move + " "
             if move[0].lower() == "p":
                 self.set_moves_since_pawn_move(0)
             else:

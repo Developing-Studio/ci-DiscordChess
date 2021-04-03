@@ -15,6 +15,7 @@ def print_fen(fen):
 g = ChessGame()
 while True:
     print_fen(g.game)
+    print(g.log)
     letter = input(g.get_remaining_movable_letters())
     row = input(g.get_rows_containing_figure(letter))
     line = input(g.get_lines_containing_figure_in_row(letter, row))
