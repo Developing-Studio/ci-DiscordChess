@@ -181,18 +181,50 @@ class ChessGame:
             position = increase_position(position)
         return remaining_figures
 
-    def get_remaining_figures_letters(self) -> list:
+    def get_remaining_movable_figures(self) -> list:
+        return list(set(map(lambda x: x[:3], self.get_possible_moves())))
+
+    def get_remaining_letters(self) -> list:
         return list(set(map(lambda x: x[0], self.get_remaining_figures())))
 
-    def get_remaining_movable_figures(self) -> list:
-        remaining_movable_figures = []
-        for item in self.get_possible_moves():
-            if item[:3] not in remaining_movable_figures:
-                remaining_movable_figures.append(item[:3])
-        return remaining_movable_figures
-
-    def get_remaining_movable_figures_letters(self) -> list:
+    def get_remaining_movable_letters(self) -> list:
         return list(set(map(lambda x: x[0], self.get_remaining_movable_figures())))
+
+    def get_rows_containing_figure(self, figure: str) -> list:
+        rows = []
+        position = "a1"
+        for _ in range(64):
+            if self.get_position(position)[0] == figure:
+                rows.append(position[0])
+            position = increase_position(position)
+        return list(set(rows))
+
+    def get_lines_containing_figure(self, figure: str) -> list:
+        lines = []
+        position = "a1"
+        for _ in range(64):
+            if self.get_position(position)[0] == figure:
+                lines.append(position[1])
+            position = increase_position(position)
+        return list(set(lines))
+
+    def get_rows_containing_figure_in_line(self, figure: str, line: str) -> list:
+        rows = []
+        position = "a" + line
+        for _ in range(8):
+            if self.get_position(position)[0] == figure:
+                rows.append(position[0])
+            position = increase_position(position, by=8)
+        return list(set(rows))
+
+    def get_lines_containing_figure_in_row(self, figure: str, row: str) -> list:
+        lines = []
+        position = row + "1"
+        for _ in range(8):
+            if self.get_position(position)[0] == figure:
+                lines.append(position[1])
+            position = increase_position(position, by=8)
+        return list(set(lines))
 
     def get_possible_moves(self) -> list:
         possible_moves = []
