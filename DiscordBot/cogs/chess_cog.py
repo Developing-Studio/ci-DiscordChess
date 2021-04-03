@@ -1,4 +1,4 @@
-from discord import Embed
+from discord import Embed, Member
 from discord.ext.commands import Cog, AutoShardedBot, Context, group
 
 from DiscordBot.color import Colors
@@ -26,5 +26,5 @@ class ChessCog(Cog):
         await ctx.send(embed=embed)
 
     @game.command()
-    async def create(self, ctx: Context, *, name: str = "Chess Game"):
-        await Game.create(ctx, name)
+    async def create(self, ctx: Context, challenge: Member, *, name: str = "Chess Game"):
+        await Game.create(ctx, challenge, name)
