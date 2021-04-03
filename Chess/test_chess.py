@@ -13,7 +13,7 @@ def print_fen(fen):
 
 
 g = ChessGame()
-print(g.get_remaining_movable_letters())
+print(g.get_figure_possible_moves_rows_in_line("Pe2", "3"))
 
 while True:
     print(g.get_all_possible_moves())

@@ -182,13 +182,13 @@ class ChessGame:
         return remaining_figures
 
     def get_remaining_movable_figures(self) -> list:
-        return list(set(map(lambda x: x[:3], self.get_all_possible_moves())))
+        return list(dict.fromkeys(map(lambda x: x[:3], self.get_all_possible_moves())))
 
     def get_remaining_letters(self) -> list:
-        return list(set(map(lambda x: x[0], self.get_remaining_figures())))
+        return list(dict.fromkeys(map(lambda x: x[0], self.get_remaining_figures())))
 
     def get_remaining_movable_letters(self) -> list:
-        return list(set(map(lambda x: x[0], self.get_remaining_movable_figures())))
+        return list(dict.fromkeys(map(lambda x: x[0], self.get_remaining_movable_figures())))
 
     def get_rows_containing_figure(self, figure: str) -> list:
         rows = []
@@ -197,7 +197,7 @@ class ChessGame:
             if self.get_position(position)[0] == figure:
                 rows.append(position[0])
             position = increase_position(position)
-        return list(set(rows))
+        return list(dict.fromkeys(rows))
 
     def get_lines_containing_figure(self, figure: str) -> list:
         lines = []
@@ -206,7 +206,7 @@ class ChessGame:
             if self.get_position(position)[0] == figure:
                 lines.append(position[1])
             position = increase_position(position)
-        return list(set(lines))
+        return list(dict.fromkeys(lines))
 
     def get_rows_containing_figure_in_line(self, figure: str, line: str) -> list:
         rows = []
@@ -215,7 +215,7 @@ class ChessGame:
             if self.get_position(position)[0] == figure:
                 rows.append(position[0])
             position = increase_position(position, by=8)
-        return list(set(rows))
+        return list(dict.fromkeys(rows))
 
     def get_lines_containing_figure_in_row(self, figure: str, row: str) -> list:
         lines = []
@@ -224,7 +224,7 @@ class ChessGame:
             if self.get_position(position)[0] == figure:
                 lines.append(position[1])
             position = increase_position(position, by=8)
-        return list(set(lines))
+        return list(dict.fromkeys(lines))
 
     def get_figure_possible_moves(self, figure: str):
         possible_moves = []
@@ -316,6 +316,18 @@ class ChessGame:
             check(0, -1, "-" + opponent_pieces)
             check(-1, -1, "-" + opponent_pieces)
         return possible_moves
+
+    def get_figure_possible_moves_rows(self, figure: str) -> list:
+        return list(dict.fromkeys(map(lambda x: x[3], self.get_figure_possible_moves(figure))))
+
+    def get_figure_possible_moves_lines(self, figure: str) -> list:
+        return list(dict.fromkeys(map(lambda x: x[4], self.get_figure_possible_moves(figure))))
+
+    def get_figure_possible_moves_rows_in_line(self, figure: str, line: str) -> list:
+        return list(dict.fromkeys(map(lambda x: x[3], filter(lambda x: x[4] == line, self.get_figure_possible_moves(figure)))))
+
+    def get_figure_possible_moves_lines_in_row(self, figure: str, row: str) -> list:
+        return list(dict.fromkeys(map(lambda x: x[4], filter(lambda x: x[3] == row, self.get_figure_possible_moves(figure)))))
 
     def get_all_possible_moves(self) -> list:
         all_possible_moves = []
