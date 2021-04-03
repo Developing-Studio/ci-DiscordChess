@@ -39,6 +39,7 @@ async def help(ctx: Context):
         value="To list all games, run\n`%game`.\nTo jump to one of these Games, click on the name of the game.",
         inline=False
     )
+    embed.add_field(name="Giving up and offering a draw", value="To give up (it has to be your own turn), click :x:\nTo offer a draw, click on :handshake:. Both players have to react with :handshake: before the game goes along, otherwise, it is automatically denied.")
     embed.add_field(name="** **", value="** **", inline=False)
     embed.add_field(name="Source Code", value="[Github page](https://github.com/DiscordChess/DiscordChess)")
     embed.add_field(name="** **", value="Used on `" + str(len(bot.guilds)) + "` server(s).")

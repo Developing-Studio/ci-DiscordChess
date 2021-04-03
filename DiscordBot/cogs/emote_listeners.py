@@ -20,6 +20,14 @@ class EmoteCog(Cog):
         if game is None:
             return
 
+        if member.id != game.m1.id and member.id != game.m2.id:
+            return
+
+        if reaction.emoji == "🤝":
+            if reaction.count == 3:
+                await game.remis()
+            return
+
         if game.get_current_member().id != member.id:
             await message.remove_reaction(reaction, member)
             return
