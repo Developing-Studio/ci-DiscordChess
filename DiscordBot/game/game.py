@@ -9,8 +9,9 @@ from DiscordBot.utils import figure_to_emoji
 
 
 class Game:
-    def __init__(self, member: Member, name: str):
-        self.member = member
+    def __init__(self, m1: Member, m2: Member, name: str):
+        self.m1 = m1
+        self.m2 = m2
         self.name = name
         self.chess = ChessGame()
         self.id = 0
@@ -32,10 +33,11 @@ class Game:
 
         return string
 
-    async def update_message(self):
+    def create_embed(self):
         embed = Embed(title=self.name, color=Colors.GAME_DARK)
         embed.description = self.create_board()
-        embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
+        embed.add_field(name="Contestants", value="White: " + self.m1.mention + "\nBlack: " + self.m2.mention,
+                        inline=False)
         embed.add_field(
             name=self.chess.get_turn_name() + " can castle",
             value="King Side: " + (
@@ -43,26 +45,20 @@ class Game:
                   "\nQueen Side: " + (
                       ":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:")
         )
-        await self.message.edit(embed=embed)
+        embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
+        return embed
+
+    async def update_message(self):
+        await self.message.edit(embed=self.create_embed())
 
     async def create_message(self, ctx: Context):
-        embed = Embed(title=self.name, color=Colors.GAME_DARK)
-        embed.description = self.create_board()
-        embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
-        embed.add_field(
-            name=self.chess.get_turn_name() + " can castle",
-            value="King Side: " + (
-                ":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:") +
-                  "\nQueen Side: " + (
-                      ":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:")
-        )
-        self.message: Message = await ctx.send(embed=embed)
+        self.message: Message = await ctx.send(embed=self.create_embed())
         self.id = self.message.id
         self.url = self.message.jump_url
 
     @staticmethod
-    async def create(ctx: Context, name: str) -> "Game":
-        game: Game = Game(ctx.author, name)
+    async def create(ctx: Context, challenge: Member, name: str) -> "Game":
+        game: Game = Game(ctx.author, challenge, name)
         if ctx.author.id not in games.keys():
             games[ctx.author.id] = []
 
