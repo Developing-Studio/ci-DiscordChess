@@ -207,74 +207,74 @@ class ChessGame:
     def get_remaining_movable_letters(self) -> list:
         return list(dict.fromkeys(map(lambda x: x[0], self.get_remaining_movable_figures())))
 
-    def get_rows_containing_figure(self, figure: str) -> list:
+    def get_rows_containing_letter(self, letter: str) -> list:
         rows = []
         position = "a1"
         for _ in range(64):
-            if self.get_position(position)[0] == figure:
+            if self.get_position(position)[0] == letter:
                 rows.append(position[0])
             position = increase_position(position)
         return list(dict.fromkeys(rows))
 
-    def get_rows_containing_movable_figure(self, figure: str) -> list:
+    def get_rows_containing_movable_letter(self, letter: str) -> list:
         rows = []
         position = "a1"
         for _ in range(64):
-            if (self.get_position(position)[0] == figure) and (len(self.get_figure_possible_moves(figure + position)) > 0):
+            if (self.get_position(position)[0] == letter) and (len(self.get_figure_possible_moves(letter + position)) > 0):
                 rows.append(position[0])
             position = increase_position(position)
         return list(dict.fromkeys(rows))
 
-    def get_lines_containing_figure(self, figure: str) -> list:
+    def get_lines_containing_letter(self, letter: str) -> list:
         lines = []
         position = "a1"
         for _ in range(64):
-            if self.get_position(position)[0] == figure:
+            if self.get_position(position)[0] == letter:
                 lines.append(position[1])
             position = increase_position(position)
         return list(dict.fromkeys(lines))
 
-    def get_lines_containing_movable_figure(self, figure: str) -> list:
+    def get_lines_containing_movable_letter(self, letter: str) -> list:
         lines = []
         position = "a1"
         for _ in range(64):
-            if (self.get_position(position)[0] == figure) and (len(self.get_figure_possible_moves(figure + position)) > 0):
+            if (self.get_position(position)[0] == letter) and (len(self.get_figure_possible_moves(letter + position)) > 0):
                 lines.append(position[1])
             position = increase_position(position)
         return list(dict.fromkeys(lines))
 
-    def get_rows_containing_figure_in_line(self, figure: str, line: str) -> list:
+    def get_rows_containing_letter_in_line(self, letter: str, line: str) -> list:
         rows = []
         position = "a" + line
         for _ in range(8):
-            if self.get_position(position)[0] == figure:
+            if self.get_position(position)[0] == letter:
                 rows.append(position[0])
             position = increase_position(position, by=8)
         return list(dict.fromkeys(rows))
 
-    def get_rows_containing_movable_figure_in_line(self, figure: str, line: str) -> list:
+    def get_rows_containing_movable_letter_in_line(self, letter: str, line: str) -> list:
         rows = []
         position = "a" + line
         for _ in range(8):
-            if (self.get_position(position)[0] == figure) and (len(self.get_figure_possible_moves(figure + position)) > 0):
+            if (self.get_position(position)[0] == letter) and (len(self.get_figure_possible_moves(letter + position)) > 0):
                 rows.append(position[0])
             position = increase_position(position, by=8)
         return list(dict.fromkeys(rows))
 
-    def get_lines_containing_figure_in_row(self, figure: str, row: str) -> list:
+    def get_lines_containing_letter_in_row(self, letter: str, row: str) -> list:
         lines = []
         position = row + "1"
         for _ in range(8):
-            if self.get_position(position)[0] == figure:
+            if self.get_position(position)[0] == letter:
                 lines.append(position[1])
             position = increase_position(position, by=1)
         return list(dict.fromkeys(lines))
 
-    def get_lines_containing_movable_figure_in_row(self, figure: str, row: str) -> list:
+    def get_lines_containing_movable_letter_in_row(self, letter: str, row: str) -> list:
         lines = []
         position = row + "1"
         for _ in range(8):
-            if (self.get_position(position)[0] == figure) and (len(self.get_figure_possible_moves(figure + position)) > 0):
+            if (self.get_position(position)[0] == letter) and (len(self.get_figure_possible_moves(letter + position)) > 0):
                 lines.append(position[1])
             position = increase_position(position, by=1)
         return list(dict.fromkeys(lines))

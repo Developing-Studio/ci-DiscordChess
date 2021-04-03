@@ -61,7 +61,7 @@ class Game:
             await self.message.add_reaction("❌")
 
         elif self.move_state == MoveState.SELECT_FIGURE_ROW:
-            rows = self.chess.get_rows_containing_movable_figure(selected_figure)
+            rows = self.chess.get_rows_containing_movable_letter(selected_figure)
             self.selected_figure = selected_figure
             if len(rows) == 1:
                 self.move_state = MoveState.SELECT_FIGURE_COLUMN
@@ -82,7 +82,7 @@ class Game:
 
         elif self.move_state == MoveState.SELECT_FIGURE_COLUMN:
             self.selected_position = select_figure_row
-            cols = self.chess.get_lines_containing_movable_figure_in_row(self.selected_figure, self.selected_position)
+            cols = self.chess.get_lines_containing_movable_letter_in_row(self.selected_figure, self.selected_position)
 
             if len(cols) == 1:
                 self.move_state = MoveState.SELECT_MOVE_POSITION_ROW

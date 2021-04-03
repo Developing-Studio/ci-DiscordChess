@@ -17,8 +17,8 @@ while True:
     print_fen(g.game)
     print(g.log)
     letter = input(g.get_remaining_movable_letters())
-    row = input(g.get_rows_containing_movable_figure(letter))
-    line = input(g.get_lines_containing_movable_figure_in_row(letter, row))
+    row = input(g.get_rows_containing_movable_letter(letter))
+    line = input(g.get_lines_containing_movable_letter_in_row(letter, row))
     figure = letter + row + line
     move_row = input(g.get_figure_possible_moves_rows(figure))
     move_line = input(g.get_figure_possible_moves_lines_in_row(figure, move_row))
