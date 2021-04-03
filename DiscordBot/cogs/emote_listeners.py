@@ -17,6 +17,8 @@ class EmoteCog(Cog):
 
         message: Message = reaction.message
         game: Game = get_game_by_message_id(message.id)
+        if game is None:
+            return
 
         if game.get_current_member().id != member.id:
             await message.remove_reaction(reaction, member)
