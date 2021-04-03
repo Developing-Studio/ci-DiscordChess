@@ -181,12 +181,18 @@ class ChessGame:
             position = increase_position(position)
         return remaining_figures
 
+    def get_remaining_figures_letters(self) -> list:
+        pass
+
     def get_remaining_movable_figures(self) -> list:
         remaining_movable_figures = []
         for item in self.get_possible_moves():
             if item[:3] not in remaining_movable_figures:
                 remaining_movable_figures.append(item[:3])
         return remaining_movable_figures
+
+    def get_remaining_movable_figures_letters(self) -> list:
+        pass
 
     def get_possible_moves(self) -> list:
         possible_moves = []
