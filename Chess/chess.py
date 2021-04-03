@@ -171,6 +171,23 @@ class ChessGame:
     def increase_move_number(self, by: int = 1):
         self.set_move_number(self.get_move_number() + by)
 
+    def get_remaining_figures(self) -> list:
+        pieces = white_pieces if self.get_turn() == "w" else black_pieces
+        remaining_figures = []
+        position = "a1"
+        for _ in range(64):
+            if self.get_position(position) in pieces:
+                remaining_figures.append(self.get_position(position) + position)
+            position = increase_position(position)
+        return remaining_figures
+
+    def get_remaining_movable_figures(self) -> list:
+        remaining_movable_figures = []
+        for item in self.get_possible_moves():
+            if item[:3] not in remaining_movable_figures:
+                remaining_movable_figures.append(item[:3])
+        return remaining_movable_figures
+
     def get_possible_moves(self) -> list:
         possible_moves = []
         if self.get_turn() == "w":
