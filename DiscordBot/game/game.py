@@ -13,6 +13,8 @@ class Game:
         self.member = member
         self.name = name
         self.chess = ChessGame()
+        self.id = 0
+        self.url = ""
 
     def create_board(self):
         string = ":regional_indicator_a::regional_indicator_b::regional_indicator_c::regional_indicator_d::regional_indicator_e::regional_indicator_f::regional_indicator_g::regional_indicator_h:\n"
@@ -23,7 +25,8 @@ class Game:
             for figure in row:
                 string += figure_to_emoji(figure, white)
                 white = not white
-            string += ":%s:\n" % ("eight" if row_i == 8 else "seven" if row_i == 7 else "six" if row_i == 6 else "five" if row_i == 5 else "four" if row_i == 4 else "three" if row_i == 3 else "two" if row_i == 2 else "one")
+            string += ":%s:\n" % (
+                "eight" if row_i == 8 else "seven" if row_i == 7 else "six" if row_i == 6 else "five" if row_i == 5 else "four" if row_i == 4 else "three" if row_i == 3 else "two" if row_i == 2 else "one")
             row_i -= 1
             white = not white
 
@@ -32,7 +35,12 @@ class Game:
     async def create_message(self, ctx: Context):
         embed = Embed(title=self.name, color=Colors.GAME_DARK)
         embed.description = self.create_board()
-        embed.add_field(name="Who's turn?", value="White" if self.chess.get_turn() == "w" else "Black")
+        embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
+        embed.add_field(
+            name=self.chess.get_turn_name() + " can castle",
+            value="King Side: " + (":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:") +
+                  "\nQueen Side: " + (":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:")
+        )
         message: Message = await ctx.send(embed=embed)
         self.id = message.id
         self.url = message.jump_url
