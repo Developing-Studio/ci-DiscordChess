@@ -32,18 +32,33 @@ class Game:
 
         return string
 
+    async def update_message(self):
+        embed = Embed(title=self.name, color=Colors.GAME_DARK)
+        embed.description = self.create_board()
+        embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
+        embed.add_field(
+            name=self.chess.get_turn_name() + " can castle",
+            value="King Side: " + (
+                ":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:") +
+                  "\nQueen Side: " + (
+                      ":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:")
+        )
+        await self.message.edit(embed=embed)
+
     async def create_message(self, ctx: Context):
         embed = Embed(title=self.name, color=Colors.GAME_DARK)
         embed.description = self.create_board()
         embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
         embed.add_field(
             name=self.chess.get_turn_name() + " can castle",
-            value="King Side: " + (":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:") +
-                  "\nQueen Side: " + (":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:")
+            value="King Side: " + (
+                ":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:") +
+                  "\nQueen Side: " + (
+                      ":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:")
         )
-        message: Message = await ctx.send(embed=embed)
-        self.id = message.id
-        self.url = message.jump_url
+        self.message: Message = await ctx.send(embed=embed)
+        self.id = self.message.id
+        self.url = self.message.jump_url
 
     @staticmethod
     async def create(ctx: Context, name: str) -> "Game":
