@@ -141,6 +141,24 @@ class ChessGame:
         new[2] = castle_bools_to_letters(self.get_white_can_castle_kingside(), self.get_white_can_castle_queenside(), self.get_black_can_castle_kingside(), to)
         self.game = " ".join(new)
 
+    def get_current_can_castle_kingside(self) -> bool:
+        return self.get_white_can_castle_kingside() if self.get_turn() == "w" else self.get_black_can_castle_kingside()
+
+    def set_current_can_castle_kingside(self, to: bool):
+        if self.get_turn() == "w":
+            self.set_white_can_castle_kingside(to)
+        else:
+            self.set_black_can_castle_kingside(to)
+
+    def get_current_can_castle_queenside(self) -> bool:
+        return self.get_white_can_castle_queenside() if self.get_turn() == "w" else self.get_black_can_castle_queenside()
+
+    def set_current_can_castle_queenside(self, to: bool):
+        if self.get_turn() == "w":
+            self.set_white_can_castle_queenside(to)
+        else:
+            self.set_black_can_castle_queenside(to)
+
     def get_en_passant(self) -> str:
         return self.game.split(" ")[3]
 
