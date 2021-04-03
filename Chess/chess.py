@@ -356,7 +356,7 @@ class ChessGame:
         if move in self.get_all_possible_moves():
             self.set_position(move[1:3], "-")
             self.set_position(move[3:], move[0])
-            self.log += str(self.get_move_number()) + ". " if self.get_turn() == "w"
+            self.log += str(self.get_move_number()) + ". " if self.get_turn() == "w" else ""
             self.log += move + " "
             if move[0].lower() == "p":
                 self.set_moves_since_pawn_move(0)
