@@ -14,22 +14,24 @@ class Game:
         self.name = name
         self.chess = ChessGame()
 
-    def create_emojis(self):
-        string = ""
-        index = True
+    def create_board(self):
+        string = ":regional_indicator_a::regional_indicator_b::regional_indicator_c::regional_indicator_d::regional_indicator_e::regional_indicator_f::regional_indicator_g::regional_indicator_h:\n"
+        white = True
+        row_i = 8
         for row in self.chess.game.split()[0].split("/"):
             row = numbers_to_dashes(row)
             for figure in row:
-                string += figure_to_emoji(figure, index)
-                index = not index
-            string += "\n"
-            index = not index
+                string += figure_to_emoji(figure, white)
+                white = not white
+            string += ":%s:\n" % ("eight" if row_i == 8 else "seven" if row_i == 7 else "six" if row_i == 6 else "five" if row_i == 5 else "four" if row_i == 4 else "three" if row_i == 3 else "two" if row_i == 2 else "one")
+            row_i -= 1
+            white = not white
 
         return string
 
     async def create_message(self, ctx: Context):
         embed = Embed(title=self.name, color=Colors.GAME_DARK)
-        embed.description = self.create_emojis()
+        embed.description = self.create_board()
         embed.add_field(name="Who's turn?", value="White" if self.chess.get_turn() == "w" else "Black")
         message: Message = await ctx.send(embed=embed)
         self.id = message.id
