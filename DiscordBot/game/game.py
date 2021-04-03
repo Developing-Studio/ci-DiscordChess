@@ -50,7 +50,7 @@ class Game:
 
     async def update_reactions(self):
         await self.message.clear_reactions()
-        for i in self.chess.get_remaining_movable_figures_letters():
+        for i in self.chess.get_remaining_movable_letters():
             await self.message.add_reaction(figure_to_emoji(i, 3))
 
     async def update_message(self):
