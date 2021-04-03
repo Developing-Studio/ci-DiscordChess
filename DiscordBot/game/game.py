@@ -71,7 +71,7 @@ class Game:
             await self.update_message([
                 {
                     "name": "** **",
-                    "value": "Please select the row, where your **" + letter_to_name(
+                    "value": "Please select the column, where your **" + letter_to_name(
                         self.selected_figure).lower() + "** is located",
                     "inline": False
                 }
@@ -92,7 +92,7 @@ class Game:
             await self.update_message([
                 {
                     "name": "** **",
-                    "value": "Please select the column, where your **" + letter_to_name(
+                    "value": "Please select the row, where your **" + letter_to_name(
                         self.selected_figure).lower() + "** is located on row **" + self.selected_position + "**",
                     "inline": False
                 }
@@ -143,7 +143,7 @@ class Game:
                 {
                     "name": "** **",
                     "value": "Select the column, where you want your **" + letter_to_name(
-                        self.selected_figure) + "** to go on row **" + self.move_to + "**",
+                        self.selected_figure) + "** to go on column **" + self.move_to + "**",
                     "inline": False
                 }
             ])
