@@ -27,7 +27,10 @@ class ChessCog(Cog):
 
     @game.command()
     async def create(self, ctx: Context, challenge: Member, *, name: str = "Chess Game"):
-        await Game.create(ctx, challenge, name)
+        res = await Game.create(ctx, challenge, name)
+        if res is None:
+            embed = Embed(description="You can't create another game with this player!", color=Colors.ERROR)
+            await ctx.send(embed=embed)
 
     @game.command()
     async def load(self, ctx: Context, challenge: Member, fen: str, name: str = "Chess Game"):

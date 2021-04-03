@@ -191,10 +191,15 @@ class Game:
         return self.m1 if self.chess.get_turn() == "w" else self.m2
 
     @staticmethod
-    async def create(ctx: Context, challenge: Member, name: str, fen: str = "") -> "Game":
+    async def create(ctx: Context, challenge: Member, name: str, fen: str = ""):
         game: Game = Game(ctx.author, challenge, name)
+
         if ctx.author.id not in games.keys():
             games[ctx.author.id] = []
+
+        if len(list(filter(lambda x: x.m1.id == ctx.author.id or x.m2.id == ctx.author.id, games[ctx.author.id]))):
+            return None
+
         games[ctx.author.id].append(game)
 
         if challenge.id not in games.keys():
