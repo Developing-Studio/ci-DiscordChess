@@ -13,9 +13,12 @@ def print_fen(fen):
 
 
 g = ChessGame()
-print(g.get_figure_possible_moves_rows_in_line("Pe2", "3"))
-
 while True:
-    print(g.get_all_possible_moves())
     print_fen(g.game)
-    g.move(input("Move >> "))
+    letter = input(g.get_remaining_movable_letters())
+    row = input(g.get_rows_containing_figure(letter))
+    line = input(g.get_lines_containing_figure_in_row(letter, row))
+    figure = letter + row + line
+    move_row = input(g.get_figure_possible_moves_rows(figure))
+    move_line = input(g.get_figure_possible_moves_lines_in_row(figure, move_row))
+    g.move(figure + move_row + move_line)

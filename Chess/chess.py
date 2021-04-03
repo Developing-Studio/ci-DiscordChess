@@ -223,7 +223,7 @@ class ChessGame:
         for _ in range(8):
             if self.get_position(position)[0] == figure:
                 lines.append(position[1])
-            position = increase_position(position, by=8)
+            position = increase_position(position, by=1)
         return list(dict.fromkeys(lines))
 
     def get_figure_possible_moves(self, figure: str):
