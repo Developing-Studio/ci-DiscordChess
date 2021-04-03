@@ -397,6 +397,15 @@ class ChessGame:
         if move in self.get_all_possible_moves():
             self.set_position(move[1:3], "-")
             self.set_position(move[3:], move[0])
+            if (move[0].lower() == "p") and (move[3:] == self.get_en_passant()):
+                self.set_position(move[3] + move[2], "-")
+
+            self.set_en_passant("-")
+            if (move[0] == "P") and (move[2] == "2") and (move[4] == "4"):
+                self.set_en_passant(move[1] + "3")
+            elif (move[0] == "p") and (move[2] == "7") and (move[4] == "5"):
+                self.set_en_passant(move[1] + "6")
+
             self.log += str(self.get_move_number()) + ". " if self.get_turn() == "w" else ""
             self.log += move + " "
             if move[0].lower() == "p":
