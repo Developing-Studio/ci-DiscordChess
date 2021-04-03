@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List
 
 from discord import Member, Embed, Message
@@ -5,7 +6,14 @@ from discord.ext.commands import Context
 
 from Chess.chess import ChessGame, numbers_to_dashes
 from DiscordBot.color import Colors
-from DiscordBot.utils import figure_to_emoji
+from DiscordBot.utils import figure_to_emoji, letter_to_emoji
+
+
+class MoveState(Enum):
+    SELECT_FIGURE = 0,
+    SELECT_FIGURE_ROW = 1,
+    SELECT_FIGURE_COLUMN = 2,
+    SELECT_MOVE_POSITION = 3
 
 
 class Game:
@@ -16,6 +24,24 @@ class Game:
         self.chess = ChessGame()
         self.id = 0
         self.url = ""
+        self.move_state = MoveState.SELECT_FIGURE
+
+    async def update_reactions(self, *, selected_figure: str = ""):
+        await self.message.clear_reactions()
+        await self.update_message()
+        if self.move_state == MoveState.SELECT_FIGURE:
+            await self.update_message([
+                {
+                    "name": "** **",
+                    "value": "Please select a figure to move",
+                    "inline": False
+                }
+            ])
+            for i in self.chess.get_remaining_movable_letters():
+                await self.message.add_reaction(figure_to_emoji(i, 3))
+        elif self.move_state == MoveState.SELECT_FIGURE_ROW:
+            for row in self.chess.get_rows_containing_figure(selected_figure):
+                await self.message.add_reaction(letter_to_emoji(row))
 
     def create_board(self):
         string = ":regional_indicator_a::regional_indicator_b::regional_indicator_c::regional_indicator_d::regional_indicator_e::regional_indicator_f::regional_indicator_g::regional_indicator_h:\n"
@@ -33,7 +59,7 @@ class Game:
 
         return string
 
-    def create_embed(self):
+    def create_embed(self, additional_fields=None):
         embed = Embed(title=self.name, color=Colors.GAME_DARK)
         embed.description = self.create_board()
         embed.add_field(name="Contestants", value="White: " + self.m1.mention + "\nBlack: " + self.m2.mention,
@@ -46,21 +72,24 @@ class Game:
                       ":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:")
         )
         embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
+
+        if additional_fields:
+            for i in additional_fields:
+                embed.add_field(name=i["name"], value=i["value"], inline=i["inline"])
+
         return embed
 
-    async def update_reactions(self):
-        await self.message.clear_reactions()
-        for i in self.chess.get_remaining_movable_letters():
-            await self.message.add_reaction(figure_to_emoji(i, 3))
-
-    async def update_message(self):
-        await self.message.edit(embed=self.create_embed())
+    async def update_message(self, additional_fields=None):
+        await self.message.edit(embed=self.create_embed(additional_fields))
 
     async def create_message(self, ctx: Context):
         self.message: Message = await ctx.send(embed=self.create_embed())
         await self.update_reactions()
         self.id = self.message.id
         self.url = self.message.jump_url
+
+    def get_current_member(self):
+        return self.m1 if self.chess.get_turn() == "w" else self.m2
 
     @staticmethod
     async def create(ctx: Context, challenge: Member, name: str) -> "Game":
