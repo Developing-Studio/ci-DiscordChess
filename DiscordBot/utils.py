@@ -52,6 +52,11 @@ def letter_to_emoji(letter: str) -> str:
     return f"🇦🇧🇨🇩🇪🇫🇬🇭"[ord(letter[0]) - ord("a")]
 
 
+def number_to_emoji(number: str) -> str:
+    n = int(number)
+    return ["1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣"[i:i + 3] for i in range(0, 8 * 3, 3)][n-1]
+
+
 def get_letter_by_emote(emote: str) -> str:
     for k, v in emojis.items():
         if v == emote:

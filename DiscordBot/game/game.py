@@ -4,9 +4,9 @@ from typing import List
 from discord import Member, Embed, Message
 from discord.ext.commands import Context
 
-from Chess.chess import ChessGame, numbers_to_dashes
+from Chess.chess import ChessGame, numbers_to_dashes, letter_to_name
 from DiscordBot.color import Colors
-from DiscordBot.utils import figure_to_emoji, letter_to_emoji
+from DiscordBot.utils import figure_to_emoji, letter_to_emoji, number_to_emoji
 
 
 class MoveState(Enum):
@@ -26,7 +26,12 @@ class Game:
         self.url = ""
         self.move_state = MoveState.SELECT_FIGURE
 
-    async def update_reactions(self, *, selected_figure: str = ""):
+        self.selected_figure = ""
+        self.selected_position = ""
+        self.move_to = ""
+
+    async def update_reactions(self, *, selected_figure: str = "", select_figure_row: str = "",
+                               selected_figure_col: str = ""):
         await self.message.clear_reactions()
         await self.update_message()
         if self.move_state == MoveState.SELECT_FIGURE:
@@ -39,9 +44,57 @@ class Game:
             ])
             for i in self.chess.get_remaining_movable_letters():
                 await self.message.add_reaction(figure_to_emoji(i, 3))
+
         elif self.move_state == MoveState.SELECT_FIGURE_ROW:
-            for row in self.chess.get_rows_containing_figure(selected_figure):
+            rows = self.chess.get_rows_containing_movable_figure(selected_figure)
+            self.selected_figure = selected_figure
+            if len(rows) == 1:
+                self.selected_position = rows[0]
+
+                self.move_state = MoveState.SELECT_FIGURE_COLUMN
+                await self.update_reactions(select_figure_row=rows[0])
+                return
+
+            await self.update_message([
+                {
+                    "name": "** **",
+                    "value": "Please select the row, where your **" + letter_to_name(
+                        self.selected_figure).lower() + "** is located",
+                    "inline": False
+                }
+            ])
+            for row in rows:
                 await self.message.add_reaction(letter_to_emoji(row))
+
+        elif self.move_state == MoveState.SELECT_FIGURE_COLUMN:
+            self.selected_position = select_figure_row
+            cols = self.chess.get_lines_containing_movable_figure_in_row(self.selected_figure, self.selected_position)
+
+            if len(cols) == 1:
+                self.move_state = MoveState.SELECT_MOVE_POSITION
+                await self.update_reactions(selected_figure_col=cols[0])
+                return
+
+            await self.update_message([
+                {
+                    "name": "** **",
+                    "value": "Please select the column, where your **" + letter_to_name(
+                        self.selected_figure).lower() + "** is located on row **" + self.selected_position + "**",
+                    "inline": False
+                }
+            ])
+            for col in cols:
+                await self.message.add_reaction(number_to_emoji(col))
+
+        elif self.move_state == MoveState.SELECT_MOVE_POSITION:
+            self.selected_position += selected_figure_col
+            await self.update_message([
+                {
+                    "name": "Selected figure and position",
+                    "value": "**" + letter_to_name(self.selected_figure) + "** on **" + self.selected_position + "**",
+                    "inline": False
+                }
+            ])
 
     def create_board(self):
         string = ":regional_indicator_a::regional_indicator_b::regional_indicator_c::regional_indicator_d::regional_indicator_e::regional_indicator_f::regional_indicator_g::regional_indicator_h:\n"

@@ -1,3 +1,4 @@
+#!/bin/python
 import os
 
 from discord.ext.commands import AutoShardedBot

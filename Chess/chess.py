@@ -88,7 +88,7 @@ def relative_position(position: str, relative_x: int, relative_y: int) -> str:
 
 
 class ChessGame:
-    game = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    game = "rnbqkbnr/pppppppp/7P/3P4/8/3P1PP1/4P2P/RNBQKBNR w KQkq - 0 1"
     log = ""
 
     def get_position(self, position: str) -> str:
