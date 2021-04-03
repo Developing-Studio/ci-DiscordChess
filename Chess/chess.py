@@ -89,6 +89,9 @@ class ChessGame:
     def get_turn(self) -> str:
         return self.game.split(" ")[1]
 
+    def get_turn_name(self) -> str:
+        return "White" if self.get_turn() == "w" else "Black"
+
     def set_turn(self, to: str):
         new = self.game.split(" ")
         new[1] = to
