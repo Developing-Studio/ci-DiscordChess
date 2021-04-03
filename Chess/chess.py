@@ -306,14 +306,14 @@ class ChessGame:
         possible_moves = []
         opponent_pieces = black_pieces if figure[0] in white_pieces else white_pieces
 
-        def append_if_allowed(rx: int, ry: int, allowed: str, en_passent: bool = False):
+        def append_if_allowed(rx: int, ry: int, allowed: str, end: str = "", en_passent: bool = False):
             rposition = relative_position(figure[1:], rx, ry)
             if (rposition != "-") and en_passent and (rposition == self.get_en_passant()):
                 possible_moves.append(figure + rposition)
                 return True
             elif (rposition != "-") and (self.get_position(rposition) in allowed):
                 possible_moves.append(figure + rposition)
-                return True
+                return False if self.get_position(rposition) in end else True
             else:
                 return False
 
@@ -329,16 +329,16 @@ class ChessGame:
             append_if_allowed(-1, -1, opponent_pieces, en_passent=True)
         elif figure[0].lower() == "b":
             for item in range(1, 9):
-                if not append_if_allowed(item, item, "-" + opponent_pieces):
+                if not append_if_allowed(item, item, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(-item, item, "-" + opponent_pieces):
+                if not append_if_allowed(-item, item, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(item, -item, "-" + opponent_pieces):
+                if not append_if_allowed(item, -item, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(-item, -item, "-" + opponent_pieces):
+                if not append_if_allowed(-item, -item, "-" + opponent_pieces, end=opponent_pieces):
                     break
         elif figure[0].lower() == "n":
             append_if_allowed(2, 1, "-" + opponent_pieces)
@@ -351,41 +351,41 @@ class ChessGame:
             append_if_allowed(-1, -2, "-" + opponent_pieces)
         elif figure[0].lower() == "r":
             for item in range(1, 9):
-                if not append_if_allowed(item, 0, "-" + opponent_pieces):
+                if not append_if_allowed(item, 0, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(-item, 0, "-" + opponent_pieces):
+                if not append_if_allowed(-item, 0, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(0, item, "-" + opponent_pieces):
+                if not append_if_allowed(0, item, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(0, -item, "-" + opponent_pieces):
+                if not append_if_allowed(0, -item, "-" + opponent_pieces, end=opponent_pieces):
                     break
         elif figure[0].lower() == "q":
             for item in range(1, 9):
-                if not append_if_allowed(item, item, "-" + opponent_pieces):
+                if not append_if_allowed(item, item, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(-item, item, "-" + opponent_pieces):
+                if not append_if_allowed(-item, item, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(item, -item, "-" + opponent_pieces):
+                if not append_if_allowed(item, -item, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(-item, -item, "-" + opponent_pieces):
+                if not append_if_allowed(-item, -item, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(item, 0, "-" + opponent_pieces):
+                if not append_if_allowed(item, 0, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(-item, 0, "-" + opponent_pieces):
+                if not append_if_allowed(-item, 0, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(0, item, "-" + opponent_pieces):
+                if not append_if_allowed(0, item, "-" + opponent_pieces, end=opponent_pieces):
                     break
             for item in range(1, 9):
-                if not append_if_allowed(0, -item, "-" + opponent_pieces):
+                if not append_if_allowed(0, -item, "-" + opponent_pieces, end=opponent_pieces):
                     break
         elif figure[0].lower() == "k":
             append_if_allowed(1, 1, "-" + opponent_pieces)
