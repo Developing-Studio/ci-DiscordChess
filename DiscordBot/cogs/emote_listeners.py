@@ -27,11 +27,20 @@ class EmoteCog(Cog):
         elif game.move_state == MoveState.SELECT_FIGURE_ROW:
             game.move_state = MoveState.SELECT_FIGURE_COLUMN
             em = reaction.emoji
-            print(em)
             row = "a" if em == "🇦" else "b" if em == "🇧" else "c" if em == "🇨" else "d" if em == "🇩" else "e" if em == "🇪" else "f" if em == "🇫" else "g" if em == "🇬" else "h"
             await game.update_reactions(select_figure_row=row)
         elif game.move_state == MoveState.SELECT_FIGURE_COLUMN:
-            game.move_state = MoveState.SELECT_MOVE_POSITION
+            game.move_state = MoveState.SELECT_MOVE_POSITION_ROW
             em = reaction.emoji
             emotes = ["1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣"[i:i + 3] for i in range(0, 8 * 3, 3)]
             await game.update_reactions(selected_figure_col=str(emotes.index(em) + 1))
+        elif game.move_state == MoveState.SELECT_MOVE_POSITION_ROW:
+            game.move_state = MoveState.SELECT_MOVE_POSITION_COLUMN
+            em = reaction.emoji
+            row = "a" if em == "🇦" else "b" if em == "🇧" else "c" if em == "🇨" else "d" if em == "🇩" else "e" if em == "🇪" else "f" if em == "🇫" else "g" if em == "🇬" else "h"
+            await game.update_reactions(select_move_row=row)
+        elif game.move_state == MoveState.SELECT_MOVE_POSITION_COLUMN:
+            game.move_state = MoveState.EXEC_MOVE
+            em = reaction.emoji
+            emotes = ["1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣"[i:i + 3] for i in range(0, 8 * 3, 3)]
+            await game.update_reactions(select_move_col=str(emotes.index(em) + 1))
