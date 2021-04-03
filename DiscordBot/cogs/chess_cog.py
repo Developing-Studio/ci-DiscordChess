@@ -18,7 +18,9 @@ class ChessCog(Cog):
 
         embed.add_field(
             name=":chess_pawn: Your Games",
-            value="\n".join(["[{}]({})".format(i.name, i.url) for i in get_games(ctx.author)]) if get_games(
+            value="\n".join(
+                ["[{}]({}) against {}".format(i.name, i.url, (i.m1 if i.m2 == ctx.author else i.m2).mention) for i in
+                 get_games(ctx.author)]) if get_games(
                 ctx.author) else "No games so far",
             inline=False
         )
