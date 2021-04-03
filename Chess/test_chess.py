@@ -13,9 +13,9 @@ def print_fen(fen):
 
 
 g = ChessGame()
-print(g.get_remaining_movable_figures_letters())
+print(g.get_remaining_movable_letters())
 
 while True:
-    print(g.get_possible_moves())
+    print(g.get_all_possible_moves())
     print_fen(g.game)
     g.move(input("Move >> "))
