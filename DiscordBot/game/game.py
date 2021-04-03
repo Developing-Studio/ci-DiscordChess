@@ -48,11 +48,17 @@ class Game:
         embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
         return embed
 
+    async def update_reactions(self):
+        await self.message.clear_reactions()
+        for i in self.chess.get_remaining_movable_figures_letters():
+            await self.message.add_reaction(figure_to_emoji(i, 3))
+
     async def update_message(self):
         await self.message.edit(embed=self.create_embed())
 
     async def create_message(self, ctx: Context):
         self.message: Message = await ctx.send(embed=self.create_embed())
+        await self.update_reactions()
         self.id = self.message.id
         self.url = self.message.jump_url
 
@@ -61,8 +67,11 @@ class Game:
         game: Game = Game(ctx.author, challenge, name)
         if ctx.author.id not in games.keys():
             games[ctx.author.id] = []
-
         games[ctx.author.id].append(game)
+
+        if challenge.id not in games.keys():
+            games[challenge.id] = []
+        games[challenge.id].append(game)
         await game.create_message(ctx)
         return game
 
