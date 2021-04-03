@@ -98,10 +98,7 @@ class ChessGame:
         self.game = " ".join(new)
 
     def get_white_can_castle_kingside(self) -> bool:
-        if self.game.split(" ")[2].count("K") > 0:
-            return True
-        else:
-            return False
+        return True if self.game.split(" ")[2].count("K") > 0 else False
 
     def set_white_can_castle_kingside(self, to: bool):
         new = self.game.split(" ")
@@ -109,10 +106,7 @@ class ChessGame:
         self.game = " ".join(new)
 
     def get_white_can_castle_queenside(self) -> bool:
-        if self.game.split(" ")[2].count("Q") > 0:
-            return True
-        else:
-            return False
+        return True if self.game.split(" ")[2].count("Q") > 0 else False
 
     def set_white_can_castle_queenside(self, to: bool):
         new = self.game.split(" ")
@@ -120,10 +114,7 @@ class ChessGame:
         self.game = " ".join(new)
 
     def get_black_can_castle_kingside(self) -> bool:
-        if self.game.split(" ")[2].count("k") > 0:
-            return True
-        else:
-            return False
+        return True if self.game.split(" ")[2].count("k") > 0 else False
 
     def set_black_can_castle_kingside(self, to: bool):
         new = self.game.split(" ")
@@ -131,10 +122,7 @@ class ChessGame:
         self.game = " ".join(new)
 
     def get_black_can_castle_queenside(self) -> bool:
-        if self.game.split(" ")[2].count("q") > 0:
-            return True
-        else:
-            return False
+        return True if self.game.split(" ")[2].count("q") > 0 else False
 
     def set_black_can_castle_queenside(self, to: bool):
         new = self.game.split(" ")
@@ -145,19 +133,13 @@ class ChessGame:
         return self.get_white_can_castle_kingside() if self.get_turn() == "w" else self.get_black_can_castle_kingside()
 
     def set_current_can_castle_kingside(self, to: bool):
-        if self.get_turn() == "w":
-            self.set_white_can_castle_kingside(to)
-        else:
-            self.set_black_can_castle_kingside(to)
+        self.set_white_can_castle_kingside(to) if self.get_turn() == "w" else self.set_black_can_castle_kingside(to)
 
     def get_current_can_castle_queenside(self) -> bool:
         return self.get_white_can_castle_queenside() if self.get_turn() == "w" else self.get_black_can_castle_queenside()
 
     def set_current_can_castle_queenside(self, to: bool):
-        if self.get_turn() == "w":
-            self.set_white_can_castle_queenside(to)
-        else:
-            self.set_black_can_castle_queenside(to)
+        self.set_white_can_castle_queenside(to) if self.get_turn() == "w" else self.set_black_can_castle_queenside(to)
 
     def get_en_passant(self) -> str:
         return self.game.split(" ")[3]
