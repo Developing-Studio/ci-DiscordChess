@@ -188,8 +188,31 @@ class ChessGame:
     def increase_move_number(self, by: int = 1):
         self.set_move_number(self.get_move_number() + by)
 
-    def get_remaining_figures(self) -> list:
-        pieces = white_pieces if self.get_turn() == "w" else black_pieces
+    def get_is_in_check(self, color: str) -> bool:
+        is_in_check = False
+        opponent_pieces = black_pieces if color == "w" else white_pieces
+        king = "K" if color == "w" else "k"
+        for figure in self.get_remaining_figures(pieces=opponent_pieces):
+            for move in self.get_figure_possible_moves(figure):
+                if self.get_position(move[3:]) == king:
+                    is_in_check = True
+        return is_in_check
+
+    def get_white_is_in_check(self) -> bool:
+        return self.get_is_in_check("w")
+
+    def get_black_is_in_check(self) -> bool:
+        return self.get_is_in_check("b")
+
+    def get_current_is_in_check(self) -> bool:
+        return self.get_white_is_in_check() if self.get_turn() == "w" else self.get_black_is_in_check()
+
+    def get_opponent_is_in_check(self) -> bool:
+        return self.get_black_is_in_check() if self.get_turn() == "w" else self.get_white_is_in_check()
+
+    def get_remaining_figures(self, pieces=None) -> list:
+        if pieces is None:
+            pieces = white_pieces if self.get_turn() == "w" else black_pieces
         remaining_figures = []
         position = "a1"
         for _ in range(64):
@@ -281,7 +304,7 @@ class ChessGame:
 
     def get_figure_possible_moves(self, figure: str):
         possible_moves = []
-        opponent_pieces = black_pieces if self.get_turn() == "w" else white_pieces
+        opponent_pieces = black_pieces if figure[0] in white_pieces else white_pieces
 
         def append_if_allowed(rx: int, ry: int, allowed: str, en_passent: bool = False):
             rposition = relative_position(figure[1:], rx, ry)
