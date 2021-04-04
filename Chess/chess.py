@@ -91,6 +91,7 @@ def relative_position(position: str, relative_x: int, relative_y: int) -> str:
 
 class ChessGame:
     game = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    game_states = []
     log = ""
 
     def get_position(self, position: str) -> str:
@@ -195,7 +196,7 @@ class ChessGame:
         opponent_pieces = black_pieces if color == "w" else white_pieces
         king = "K" if color == "w" else "k"
         for figure in self.get_remaining_figures(pieces=opponent_pieces):
-            for move in self.get_figure_possible_moves(figure, checking=True):
+            for move in self.get_figure_possible_moves(figure, checking_check=True):
                 if self.get_position(move[3:]) == king:
                     is_in_check = True
         return is_in_check
@@ -314,13 +315,15 @@ class ChessGame:
             position = increase_position(position, by=1)
         return list(dict.fromkeys(lines))
 
-    def get_figure_possible_moves(self, figure: str, checking: bool = False):
+    def get_figure_possible_moves(self, figure: str, checking_check: bool = False, checking_end: bool = False):
+        if (not checking_end) and self.get_game_is_over():
+            return []
         possible_moves = []
         opponent_pieces = black_pieces if figure[0] in white_pieces else white_pieces
 
         def append_if_allowed(rx: int, ry: int, allowed: str, end: str = "", en_passent: bool = False):
             rposition = relative_position(figure[1:], rx, ry)
-            if (rposition != "-") and checking:
+            if (rposition != "-") and checking_check:
                 if en_passent and (rposition == self.get_en_passant()):
                     possible_moves.append(figure + rposition)
                     return True
@@ -434,14 +437,19 @@ class ChessGame:
     def get_figure_possible_moves_lines_in_row(self, figure: str, row: str) -> list:
         return list(dict.fromkeys(map(lambda x: x[4], filter(lambda x: x[3] == row, self.get_figure_possible_moves(figure)))))
 
-    def get_all_possible_moves(self) -> list:
+    def get_all_possible_moves(self, checking_end: bool = False) -> list:
         all_possible_moves = []
         for item in self.get_remaining_figures():
-            all_possible_moves += self.get_figure_possible_moves(item)
+            all_possible_moves += self.get_figure_possible_moves(item, checking_end=checking_end)
         return all_possible_moves
 
     def move(self, move: str):
         if move in self.get_all_possible_moves():
+            if (self.get_position(move[3:]) != "") or (move[0].lower() == "p"):
+                self.set_fifty_moves(0)
+            else:
+                self.increase_fifty_moves()
+
             self.set_position(move[1:3], "-")
             self.set_position(move[3:], move[0])
             if (move[0].lower() == "p") and (move[3:] == self.get_en_passant()):
@@ -453,15 +461,40 @@ class ChessGame:
             elif (move[0] == "p") and (move[2] == "7") and (move[4] == "5"):
                 self.set_en_passant(move[1] + "6")
 
+            self.game_states.append(self.game.split(" ")[0])
             self.log += str(self.get_move_number()) + ". " if self.get_turn() == "w" else ""
             self.log += move + " "
-            if move[0].lower() == "p":
-                self.set_fifty_moves(0)
-            else:
-                self.increase_fifty_moves()
 
             if self.get_turn() == "w":
                 self.set_turn("b")
             else:
                 self.set_turn("w")
                 self.increase_move_number()
+
+    def get_game_is_over(self) -> bool:
+        return False if self.get_game_is_over_messsage() == "-" else True
+
+    def get_game_is_over_messsage(self) -> str:
+        if len(self.get_all_possible_moves(checking_end=True)) == 0:
+            if self.get_current_is_in_check():
+                return "Black wins by checkmate" if self.get_turn() == "w" else "White wins by checkmate"
+            else:
+                return "Draw by stalemate"
+        elif self.get_fifty_moves() >= 50:
+            return "Draw, since no pawn was moved and no piece taken for 50 moves"
+        else:
+            enough = False
+            semienough = 0
+            for item in self.get_remaining_figures(white_pieces + black_pieces):
+                if item[0].lower() in "prq":
+                    enough = True
+                    break
+                if item[0].lower() in "bn":
+                    semienough += 1
+            if (not enough) and (semienough <= 1):
+                return "Draw by to lack of pieces"
+            else:
+                for item in self.game_states:
+                    if self.game_states.count(item) >= 3:
+                        return "Draw by triple repetition of game state"
+                return "-"
