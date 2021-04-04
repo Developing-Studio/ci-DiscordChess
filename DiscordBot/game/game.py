@@ -176,6 +176,20 @@ class Game:
             self.move_to = ""
             self.selected_position = ""
             self.selected_figure = ""
+
+            if len(self.chess.get_all_possible_moves()) == 0:
+                await self.message.clear_reactions()
+                game: Game = self
+                remove_game(game)
+                await self.update_message([
+                    {
+                        "name": "Game over!",
+                        "value": "__Cause__: Remis",
+                        "inline": False
+                    }
+                ])
+                return
+
             await self.update_reactions()
 
     def create_board(self):
@@ -199,6 +213,8 @@ class Game:
         embed.description = self.create_board()
         embed.add_field(name="Contestants", value="White: " + self.m1.mention + "\nBlack: " + self.m2.mention,
                         inline=False)
+        embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
+        embed.add_field(name="** **", value="** **")
         embed.add_field(
             name=self.chess.get_turn_name() + " can castle",
             value="King Side: " + (
@@ -206,7 +222,6 @@ class Game:
                   "\nQueen Side: " + (
                       ":x:" if not self.chess.get_current_can_castle_kingside() else ":white_check_mark:")
         )
-        embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
 
         if additional_fields:
             for i in additional_fields:
