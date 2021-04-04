@@ -1,8 +1,9 @@
 # DiscordChess
 DiscordChess is a discord bot that allows users to play chess using discord
 
-## Discord bot
+<p align="center"><img src="./assets/icon.png" /></p>
 
+## Discord bot
 ### Invitation
 The Bot only needs the following permissions:
 - Send Messages
