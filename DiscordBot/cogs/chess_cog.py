@@ -33,6 +33,11 @@ class ChessCog(Cog):
             await ctx.send(embed=embed)
             return
 
+        if challenge.bot:
+            embed = Embed(description="You can't play against a bot!", color=Colors.ERROR)
+            await ctx.send(embed=embed)
+            return
+
         res = await Game.create(ctx, challenge, name)
         if res is None:
             embed = Embed(description="You can't create another game with this player!", color=Colors.ERROR)
@@ -42,6 +47,11 @@ class ChessCog(Cog):
     async def load(self, ctx: Context, challenge: Member, fen: str, name: str = "Chess Game"):
         if challenge == ctx.author:
             embed = Embed(description="You can't play against yourself!", color=Colors.ERROR)
+            await ctx.send(embed=embed)
+            return
+
+        if challenge.bot:
+            embed = Embed(description="You can't play against a bot!", color=Colors.ERROR)
             await ctx.send(embed=embed)
             return
 
