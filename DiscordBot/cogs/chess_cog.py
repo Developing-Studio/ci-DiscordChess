@@ -24,7 +24,6 @@ class ChessCog(Cog):
                 ctx.author) else "No games so far",
             inline=False
         )
-        embed.add_field(name=":boom: Score", value="42", inline=False)
         await ctx.send(embed=embed)
 
     @game.command()
