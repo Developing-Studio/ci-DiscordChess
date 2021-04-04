@@ -14,7 +14,7 @@ class ChessCog(Cog):
         if ctx.subcommand_passed:
             return
 
-        embed = Embed(title="Games", color=Colors.GAME)
+        embed = Embed(title="Chess Games", color=Colors.GAME)
 
         embed.add_field(
             name=":chess_pawn: Your Games",
@@ -28,6 +28,11 @@ class ChessCog(Cog):
 
     @game.command()
     async def create(self, ctx: Context, challenge: Member, *, name: str = "Chess Game"):
+        if challenge == ctx.author:
+            embed = Embed(description="You can't play against yourself!", color=Colors.ERROR)
+            await ctx.send(embed=embed)
+            return
+
         res = await Game.create(ctx, challenge, name)
         if res is None:
             embed = Embed(description="You can't create another game with this player!", color=Colors.ERROR)
@@ -35,4 +40,12 @@ class ChessCog(Cog):
 
     @game.command()
     async def load(self, ctx: Context, challenge: Member, fen: str, name: str = "Chess Game"):
-        await Game.create(ctx, challenge, name, fen)
+        if challenge == ctx.author:
+            embed = Embed(description="You can't play against yourself!", color=Colors.ERROR)
+            await ctx.send(embed=embed)
+            return
+
+        res = await Game.create(ctx, challenge, name, fen)
+        if res is None:
+            embed = Embed(description="You can't create another game with this player!", color=Colors.ERROR)
+            await ctx.send(embed=embed)
