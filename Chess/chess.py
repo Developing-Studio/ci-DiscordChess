@@ -1,3 +1,5 @@
+from copy import copy
+
 white_pieces = "PBNRQK"
 black_pieces = "pbnrqk"
 numbers = {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8}
@@ -193,7 +195,7 @@ class ChessGame:
         opponent_pieces = black_pieces if color == "w" else white_pieces
         king = "K" if color == "w" else "k"
         for figure in self.get_remaining_figures(pieces=opponent_pieces):
-            for move in self.get_figure_possible_moves(figure):
+            for move in self.get_figure_possible_moves(figure, checking=True):
                 if self.get_position(move[3:]) == king:
                     is_in_check = True
         return is_in_check
@@ -209,6 +211,16 @@ class ChessGame:
 
     def get_opponent_is_in_check(self) -> bool:
         return self.get_black_is_in_check() if self.get_turn() == "w" else self.get_white_is_in_check()
+
+    def get_current_would_be_in_check(self, move: str) -> bool:
+        original = copy(self.game)
+        self.set_position(move[1:3], "-")
+        self.set_position(move[3:], move[0])
+        if (move[0].lower() == "p") and (move[3:] == self.get_en_passant()):
+            self.set_position(move[3] + move[2], "-")
+        current_would_be_in_check = self.get_current_is_in_check()
+        self.game = copy(original)
+        return current_would_be_in_check
 
     def get_remaining_figures(self, pieces=None) -> list:
         if pieces is None:
@@ -302,20 +314,32 @@ class ChessGame:
             position = increase_position(position, by=1)
         return list(dict.fromkeys(lines))
 
-    def get_figure_possible_moves(self, figure: str):
+    def get_figure_possible_moves(self, figure: str, checking: bool = False):
         possible_moves = []
         opponent_pieces = black_pieces if figure[0] in white_pieces else white_pieces
 
         def append_if_allowed(rx: int, ry: int, allowed: str, end: str = "", en_passent: bool = False):
             rposition = relative_position(figure[1:], rx, ry)
-            if (rposition != "-") and en_passent and (rposition == self.get_en_passant()):
-                possible_moves.append(figure + rposition)
-                return True
-            elif (rposition != "-") and (self.get_position(rposition) in allowed):
-                possible_moves.append(figure + rposition)
-                return False if self.get_position(rposition) in end else True
+            if (rposition != "-") and checking:
+                if en_passent and (rposition == self.get_en_passant()):
+                    possible_moves.append(figure + rposition)
+                    return True
+                elif (rposition != "-") and (self.get_position(rposition) in allowed):
+                    possible_moves.append(figure + rposition)
+                    return False if self.get_position(rposition) in end else True
+                else:
+                    return False
+            elif (rposition != "-") and (not self.get_current_would_be_in_check(figure + rposition)):
+                if (rposition != "-") and en_passent and (rposition == self.get_en_passant()):
+                    possible_moves.append(figure + rposition)
+                    return True
+                elif (rposition != "-") and (self.get_position(rposition) in allowed):
+                    possible_moves.append(figure + rposition)
+                    return False if self.get_position(rposition) in end else True
+                else:
+                    return False
             else:
-                return False
+                return True
 
         if figure[0] == "P":
             if append_if_allowed(0, 1, "-") and (figure[2] == "2"):
