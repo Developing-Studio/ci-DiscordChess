@@ -181,13 +181,24 @@ class Game:
                 await self.message.clear_reactions()
                 game: Game = self
                 remove_game(game)
-                await self.update_message([
-                    {
-                        "name": "Game over!",
-                        "value": "__Cause__: Remis",
-                        "inline": False
-                    }
-                ])
+
+                if (b := self.chess.get_black_is_in_check()) or self.chess.get_white_is_in_check():
+                    await self.update_message([
+                        {
+                            "name": "Game over!",
+                            "value": "__Cause__: Checkmate by " + (self.m2 if b else self.m2).mention,
+                            "inline": False
+                        }
+                    ])
+                else:
+                    await self.update_message([
+                        {
+                            "name": "Game over!",
+                            "value": "__Cause__: Checkmate by Stalemate",
+                            "inline": False
+                        }
+                    ])
+
                 return
 
             await self.update_reactions()
