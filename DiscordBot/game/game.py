@@ -176,31 +176,24 @@ class Game:
             self.selected_position = ""
             self.selected_figure = ""
 
-            if len(self.chess.get_all_possible_moves()) == 0:
-                await self.message.clear_reactions()
-                game: Game = self
-                remove_game(game)
-
-                if (b := self.chess.get_black_is_in_check()) or self.chess.get_white_is_in_check():
-                    await self.update_message([
-                        {
-                            "name": "Game over!",
-                            "value": "__Cause__: Checkmate by " + (self.m1 if b else self.m2).mention,
-                            "inline": False
-                        }
-                    ])
-                else:
-                    await self.update_message([
-                        {
-                            "name": "Game over!",
-                            "value": "__Cause__: Stalemate",
-                            "inline": False
-                        }
-                    ])
-
+            if self.check_won_and_update():
                 return
-
             await self.update_reactions()
+
+    def check_won_and_update(self):
+        if self.chess.get_game_is_over():
+            await self.message.clear_reactions()
+            game: Game = self
+            remove_game(game)
+            await self.update_message([
+                {
+                    "name": "Game over!",
+                    "value": "__Cause__: " + self.chess.get_game_is_over_messsage(),
+                    "inline": False
+                }
+            ])
+            return True
+        return False
 
     def create_board(self):
         string = ":regional_indicator_a::regional_indicator_b::regional_indicator_c::regional_indicator_d::regional_indicator_e::regional_indicator_f::regional_indicator_g::regional_indicator_h:\n"
