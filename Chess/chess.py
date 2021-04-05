@@ -210,9 +210,6 @@ class ChessGame:
     def get_current_is_in_check(self) -> bool:
         return self.get_white_is_in_check() if self.get_turn() == "w" else self.get_black_is_in_check()
 
-    def get_opponent_is_in_check(self) -> bool:
-        return self.get_black_is_in_check() if self.get_turn() == "w" else self.get_white_is_in_check()
-
     def get_current_would_be_in_check(self, move: str) -> bool:
         original = copy(self.game)
         self.set_position(move[1:3], "-")
@@ -254,11 +251,11 @@ class ChessGame:
             position = increase_position(position)
         return remaining_figures
 
-    def get_remaining_letters(self) -> list:
-        return list(dict.fromkeys(map(lambda x: x[0], self.get_remaining_figures())))
-
     def get_remaining_movable_figures(self) -> list:
         return list(dict.fromkeys(map(lambda x: x[:3], self.get_all_possible_moves())))
+
+    def get_remaining_letters(self) -> list:
+        return list(dict.fromkeys(map(lambda x: x[0], self.get_remaining_figures())))
 
     def get_remaining_movable_letters(self) -> list:
         return list(dict.fromkeys(map(lambda x: x[0], self.get_remaining_movable_figures())))
@@ -486,18 +483,18 @@ class ChessGame:
     def get_figure_possible_moves_lines_in_row(self, figure: str, row: str) -> list:
         return list(dict.fromkeys(map(lambda x: x[4], filter(lambda x: x[3] == row, self.get_figure_possible_moves(figure)))))
 
+    def get_all_possible_moves(self, checking: bool = False) -> list:
+        all_possible_moves = []
+        for item in self.get_remaining_figures():
+            all_possible_moves += self.get_figure_possible_moves(item, checking=checking)
+        return all_possible_moves
+
     def get_figure_transormation_options(self, figure: str) -> list:
         transformation_options = []
         for item in self.get_figure_possible_moves(figure):
             if len(item) > 5:
                 transformation_options.append(item[5])
         return transformation_options
-
-    def get_all_possible_moves(self, checking: bool = False) -> list:
-        all_possible_moves = []
-        for item in self.get_remaining_figures():
-            all_possible_moves += self.get_figure_possible_moves(item, checking=checking)
-        return all_possible_moves
 
     def move(self, move: str):
         if move in self.get_all_possible_moves():
