@@ -197,7 +197,7 @@ class ChessGame:
         king = "K" if color == "w" else "k"
         for figure in self.get_remaining_figures(pieces=opponent_pieces):
             for move in self.get_figure_possible_moves(figure, checking=True):
-                if self.get_position(move[3:]) == king:
+                if (not move[3] == "r") and (self.get_position(move[3:5]) == king):
                     is_in_check = True
         return is_in_check
 
@@ -216,8 +216,28 @@ class ChessGame:
     def get_current_would_be_in_check(self, move: str) -> bool:
         original = copy(self.game)
         self.set_position(move[1:3], "-")
-        self.set_position(move[3:], move[0])
-        if (move[0].lower() == "p") and (move[3:] == self.get_en_passant()):
+        if len(move) > 5:
+            self.set_position(move[3:5], move[5])
+        elif move[3] == "r":
+            if move[4] == "K":
+                self.set_position("h1", "-")
+                self.set_position("g1", "K")
+                self.set_position("f1", "R")
+            elif move[4] == "Q":
+                self.set_position("a1", "-")
+                self.set_position("c1", "K")
+                self.set_position("d1", "R")
+            elif move[4] == "k":
+                self.set_position("h8", "-")
+                self.set_position("g8", "k")
+                self.set_position("f8", "r")
+            elif move[4] == "q":
+                self.set_position("a8", "-")
+                self.set_position("c8", "k")
+                self.set_position("d8", "r")
+        else:
+            self.set_position(move[3:5], move[0])
+        if (move[0].lower() == "p") and (move[3:5] == self.get_en_passant()):
             self.set_position(move[3] + move[2], "-")
         current_would_be_in_check = self.get_current_is_in_check()
         self.game = copy(original)
@@ -321,22 +341,33 @@ class ChessGame:
         possible_moves = []
         opponent_pieces = black_pieces if figure[0] in white_pieces else white_pieces
 
-        def append_if_allowed(rx: int, ry: int, allowed: str, end: str = "", en_passent: bool = False):
-            rposition = relative_position(figure[1:], rx, ry)
+        def append_if_allowed(rx: int, ry: int, allowed: str, end: str = ""):
+            rposition = relative_position(figure[1:5], rx, ry)
             if (rposition != "-") and checking:
-                if en_passent and (rposition == self.get_en_passant()):
+                if (figure[0].lower() == "p") and (rposition == self.get_en_passant()):
                     possible_moves.append(figure + rposition)
                     return True
-                elif (rposition != "-") and (self.get_position(rposition) in allowed):
+                elif (figure[0].lower() == "p") and (rposition[1] in "18") and (self.get_position(rposition) in allowed):
+                    options = "BNRQ" if figure[0] in white_pieces else "bnrq"
+                    for option in options:
+                        possible_moves.append(figure + rposition + option)
+                    return False
+                elif self.get_position(rposition) in allowed:
                     possible_moves.append(figure + rposition)
                     return False if self.get_position(rposition) in end else True
                 else:
                     return False
             elif (rposition != "-") and (not self.get_current_would_be_in_check(figure + rposition)):
-                if (rposition != "-") and en_passent and (rposition == self.get_en_passant()):
+                if (figure[0].lower() == "p") and (rposition == self.get_en_passant()):
                     possible_moves.append(figure + rposition)
                     return True
-                elif (rposition != "-") and (self.get_position(rposition) in allowed):
+                elif (figure[0].lower() == "p") and (rposition[1] in "18") and (
+                        self.get_position(rposition) in allowed):
+                    options = "BNRQ" if figure[0] in white_pieces else "bnrq"
+                    for option in options:
+                        possible_moves.append(figure + rposition + option)
+                    return False
+                elif self.get_position(rposition) in allowed:
                     possible_moves.append(figure + rposition)
                     return False if self.get_position(rposition) in end else True
                 else:
@@ -347,13 +378,13 @@ class ChessGame:
         if figure[0] == "P":
             if append_if_allowed(0, 1, "-") and (figure[2] == "2"):
                 append_if_allowed(0, 2, "-")
-            append_if_allowed(1, 1, opponent_pieces, en_passent=True)
-            append_if_allowed(-1, 1, opponent_pieces, en_passent=True)
+            append_if_allowed(1, 1, opponent_pieces)
+            append_if_allowed(-1, 1, opponent_pieces)
         elif figure[0] == "p":
             if append_if_allowed(0, -1, "-") and (figure[2] == "7"):
                 append_if_allowed(0, -2, "-")
-            append_if_allowed(1, -1, opponent_pieces, en_passent=True)
-            append_if_allowed(-1, -1, opponent_pieces, en_passent=True)
+            append_if_allowed(1, -1, opponent_pieces)
+            append_if_allowed(-1, -1, opponent_pieces)
         elif figure[0].lower() == "b":
             for item in range(1, 9):
                 if not append_if_allowed(item, item, "-" + opponent_pieces, end=opponent_pieces):
@@ -423,6 +454,24 @@ class ChessGame:
             append_if_allowed(1, -1, "-" + opponent_pieces)
             append_if_allowed(0, -1, "-" + opponent_pieces)
             append_if_allowed(-1, -1, "-" + opponent_pieces)
+            if checking:
+                if (figure[0] == "K") and self.get_white_can_castle_kingside() and (self.get_position("f1") == "-") and (self.get_position("g1") == "-"):
+                    possible_moves.append("Ke1rK")
+                if (figure[0] == "K") and self.get_white_can_castle_queenside() and (self.get_position("d1") == "-") and (self.get_position("c1") == "-") and (self.get_position("b1") == "-"):
+                    possible_moves.append("Ke1rQ")
+                if (figure[0] == "k") and self.get_black_can_castle_kingside() and (self.get_position("f8") == "-") and (self.get_position("g8") == "-"):
+                    possible_moves.append("ke8rk")
+                if (figure[0] == "k") and self.get_black_can_castle_queenside() and (self.get_position("d8") == "-") and (self.get_position("c8") == "-") and (self.get_position("b8") == "-"):
+                    possible_moves.append("ke8rq")
+            else:
+                if (figure[0] == "K") and self.get_white_can_castle_kingside() and (self.get_position("f1") == "-") and (self.get_position("g1") == "-") and (not self.get_current_is_in_check()) and (not self.get_current_would_be_in_check("Ke1f1")) and (not self.get_current_would_be_in_check("Ke1g1")):
+                    possible_moves.append("Ke1rK")
+                if (figure[0] == "K") and self.get_white_can_castle_queenside() and (self.get_position("d1") == "-") and (self.get_position("c1") == "-") and (self.get_position("b1") == "-") and (not self.get_current_is_in_check()) and (not self.get_current_would_be_in_check("Ke1d1")) and (not self.get_current_would_be_in_check("Ke1c1")):
+                    possible_moves.append("Ke1rQ")
+                if (figure[0] == "k") and self.get_black_can_castle_kingside() and (self.get_position("f8") == "-") and (self.get_position("g8") == "-") and (not self.get_current_is_in_check()) and (not self.get_current_would_be_in_check("ke8f8")) and (not self.get_current_would_be_in_check("ke8g8")):
+                    possible_moves.append("ke8rk")
+                if (figure[0] == "k") and self.get_black_can_castle_queenside() and (self.get_position("d8") == "-") and (self.get_position("c8") == "-") and (self.get_position("b8") == "-") and (not self.get_current_is_in_check()) and (not self.get_current_would_be_in_check("ke8d8")) and (not self.get_current_would_be_in_check("ke8c8")):
+                    possible_moves.append("ke8rq")
         return possible_moves
 
     def get_figure_possible_moves_rows(self, figure: str) -> list:
@@ -437,6 +486,13 @@ class ChessGame:
     def get_figure_possible_moves_lines_in_row(self, figure: str, row: str) -> list:
         return list(dict.fromkeys(map(lambda x: x[4], filter(lambda x: x[3] == row, self.get_figure_possible_moves(figure)))))
 
+    def get_figure_transormation_options(self, figure: str) -> list:
+        transformation_options = []
+        for item in self.get_figure_possible_moves(figure):
+            if len(item) > 5:
+                transformation_options.append(item[5])
+        return transformation_options
+
     def get_all_possible_moves(self, checking: bool = False) -> list:
         all_possible_moves = []
         for item in self.get_remaining_figures():
@@ -445,15 +501,44 @@ class ChessGame:
 
     def move(self, move: str):
         if move in self.get_all_possible_moves():
-            if (self.get_position(move[3:]) != "") or (move[0].lower() == "p"):
+            if (move[3] == "r") or (self.get_position(move[3:5]) != "") or (move[0].lower() == "p"):
                 self.set_fifty_moves(0)
             else:
                 self.increase_fifty_moves()
 
             self.set_position(move[1:3], "-")
-            self.set_position(move[3:], move[0])
-            if (move[0].lower() == "p") and (move[3:] == self.get_en_passant()):
+            if len(move) > 5:
+                self.set_position(move[3:5], move[5])
+            elif move[3] == "r":
+                if move[4] == "K":
+                    self.set_position("h1", "-")
+                    self.set_position("g1", "K")
+                    self.set_position("f1", "R")
+                elif move[4] == "Q":
+                    self.set_position("a1", "-")
+                    self.set_position("c1", "K")
+                    self.set_position("d1", "R")
+                elif move[4] == "k":
+                    self.set_position("h8", "-")
+                    self.set_position("g8", "k")
+                    self.set_position("f8", "r")
+                elif move[4] == "q":
+                    self.set_position("a8", "-")
+                    self.set_position("c8", "k")
+                    self.set_position("d8", "r")
+            else:
+                self.set_position(move[3:5], move[0])
+            if (move[0].lower() == "p") and (move[3:5] == self.get_en_passant()):
                 self.set_position(move[3] + move[2], "-")
+
+            if (move[:3] == "Ke1") or (move[:3] == "Ra1"):
+                self.set_white_can_castle_kingside(False)
+            if (move[:3] == "Ke1") or (move[:3] == "Rf1"):
+                self.set_white_can_castle_queenside(False)
+            if (move[:3] == "ke8") or (move[:3] == "ra8"):
+                self.set_black_can_castle_kingside(False)
+            if (move[:3] == "ke8") or (move[:3] == "rf8"):
+                self.set_black_can_castle_queenside(False)
 
             self.set_en_passant("-")
             if (move[0] == "P") and (move[2] == "2") and (move[4] == "4"):
