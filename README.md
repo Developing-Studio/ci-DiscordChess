@@ -1,5 +1,5 @@
 # DiscordChess
-<p align="center"><img src="./assets/icon.png" /></p>
+<p align="center"><img src="./assets/social.png" /></p>
 
 ![Issues](https://img.shields.io/github/issues/DiscordChess/DiscordChess?style=flat-square)
 ![License](https://img.shields.io/github/license/DiscordChess/DiscordCHess?style=flat-square)
