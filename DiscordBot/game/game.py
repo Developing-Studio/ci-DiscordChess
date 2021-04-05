@@ -59,7 +59,6 @@ class Game:
     async def update_reactions(self, *, selected_figure: str = "", select_figure_row: str = "",
                                selected_figure_col: str = "", select_move_row: str = "", select_move_col: str = ""):
         await self.message.clear_reactions()
-        await self.update_message()
         if self.move_state == MoveState.SELECT_FIGURE:
             await self.update_message([
                 {
