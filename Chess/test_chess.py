@@ -13,7 +13,7 @@ def print_fen(fen):
 
 
 g = ChessGame()
-g.game = "8/1k4P1/8/8/8/8/8/1K6 w - - 0 1"
+g.game = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1"
 while True:
     print_fen(g.game)
     print(g.log)
