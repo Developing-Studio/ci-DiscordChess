@@ -176,11 +176,11 @@ class Game:
             self.selected_position = ""
             self.selected_figure = ""
 
-            if self.check_won_and_update():
+            if await self.check_won_and_update():
                 return
             await self.update_reactions()
 
-    def check_won_and_update(self):
+    async def check_won_and_update(self):
         if self.chess.get_game_is_over():
             await self.message.clear_reactions()
             game: Game = self
