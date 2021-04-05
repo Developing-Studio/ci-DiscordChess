@@ -186,7 +186,7 @@ class Game:
                     await self.update_message([
                         {
                             "name": "Game over!",
-                            "value": "__Cause__: Checkmate by " + (self.m2 if b else self.m2).mention,
+                            "value": "__Cause__: Checkmate by " + (self.m1 if b else self.m2).mention,
                             "inline": False
                         }
                     ])
