@@ -332,8 +332,8 @@ class ChessGame:
             position = increase_position(position, by=1)
         return list(dict.fromkeys(lines))
 
-    def get_figure_possible_moves(self, figure: str, checking: bool = False):
-        if (not checking) and self.get_game_is_over():
+    def get_figure_possible_moves(self, figure: str, checking: bool = False, checking_end: bool = False):
+        if (not checking) and (not checking_end) and self.get_game_is_over():
             return []
         possible_moves = []
         opponent_pieces = black_pieces if figure[0] in white_pieces else white_pieces
@@ -483,10 +483,10 @@ class ChessGame:
     def get_figure_possible_moves_lines_in_row(self, figure: str, row: str) -> list:
         return list(dict.fromkeys(map(lambda x: x[4], filter(lambda x: x[3] == row, self.get_figure_possible_moves(figure)))))
 
-    def get_all_possible_moves(self, checking: bool = False) -> list:
+    def get_all_possible_moves(self, checking_end: bool = False) -> list:
         all_possible_moves = []
         for item in self.get_remaining_figures():
-            all_possible_moves += self.get_figure_possible_moves(item, checking=checking)
+            all_possible_moves += self.get_figure_possible_moves(item, checking_end=checking_end)
         return all_possible_moves
 
     def get_figure_transormation_options(self, figure: str) -> list:
@@ -557,7 +557,7 @@ class ChessGame:
         return False if self.get_game_is_over_messsage() == "-" else True
 
     def get_game_is_over_messsage(self) -> str:
-        if len(self.get_all_possible_moves(checking=True)) == 0:
+        if len(self.get_all_possible_moves(checking_end=True)) == 0:
             if self.get_current_is_in_check():
                 return "Black wins by checkmate" if self.get_turn() == "w" else "White wins by checkmate"
             else:

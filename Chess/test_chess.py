@@ -5,7 +5,7 @@ from time import time
 def performence_test(function, *args):
     t = time()
     function(*args)
-    print(str(function.__name__) + ": " + str(round(time() - t, 5)) + " Sekunden")
+    print(str(function.__name__) + ": " + str("{:f}".format(round(time() - t, 5))) + " Sekunden")
 
 
 performence_test(letter_to_name, "A")
@@ -82,7 +82,8 @@ def print_fen(fen):
 
 
 g = ChessGame()
-g.game = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1"
+# "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1"
+g.game = "k7/pp6/3Q4/8/8/8/8/3K4 w - - 0 1"
 while True:
     print_fen(g.game)
     print(g.log)
