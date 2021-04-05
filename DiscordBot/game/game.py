@@ -194,7 +194,7 @@ class Game:
                     await self.update_message([
                         {
                             "name": "Game over!",
-                            "value": "__Cause__: Checkmate by Stalemate",
+                            "value": "__Cause__: Stalemate",
                             "inline": False
                         }
                     ])
