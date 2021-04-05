@@ -35,5 +35,12 @@ You cannot play two games against the same player simultaneously. Also, you cann
 #### Show all of your current (not finished) games
 `%game` without any argument. To jump to one of these games, click on the name of the game.
 
+### Give up and offer a draw
+To give up, you need to click on the ❌, if it's your turn, otherwise, it won't work
+
+To offer a remis, click on 🤝, whether it is your turn or not.
+Your opponent has click on this emoji too, in order to accept the remis.
+Attention: If you are offering a draw and your opponent continues playing, the offer will be rejected automatically!
+
 ## Chess framework
 ...
