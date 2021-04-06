@@ -117,7 +117,10 @@ class SelectMovePosRow(State):
         self.selected_letter = selected_letter
         self.position = position
 
-        self.rows = self.game.chess.get_figure_possible_moves_rows(self.selected_letter + self.position)
+        self.rows = sorted(
+            self.game.chess.get_figure_possible_moves_rows(self.selected_letter + self.position),
+            key=ord
+        )
         if len(self.rows) == 1:
             self.next(self.rows[0])
 
