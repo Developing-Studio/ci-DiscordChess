@@ -93,7 +93,8 @@ class SelectFigureRow(State):
     def on_react(self, reaction: Reaction):
         em = reaction.emoji
         self.next(
-            "a" if em == "🇦" else "b" if em == "🇧" else "c" if em == "🇨" else "d" if em == "🇩" else "e" if em == "🇪" else "f" if em == "🇫" else "g" if em == "🇬" else "h")
+            "a" if em == "🇦" else "b" if em == "🇧" else "c" if em == "🇨" else "d" if em == "🇩" else "e" if em == "🇪" else "f" if em == "🇫" else "g" if em == "🇬" else "h"
+        )
 
 
 class SelectFigureColumn(State):
@@ -134,8 +135,9 @@ class SelectMovePosRow(State):
         if len(self.rows) == 1:
             self.next(self.rows[0])
 
-    def next(self, selected_row):
-        pass
+    def next(self, selected_row, castled: bool = False):
+        if not castled:
+            SelectMovePosColumn(self.game, self.selected_letter, self.position, selected_row)
 
     def get_embed_fields(self) -> List[Field]:
         l = [
@@ -165,4 +167,60 @@ class SelectMovePosRow(State):
         return [letter_to_emoji(i) for i in self.rows]
 
     def on_react(self, reaction: Reaction):
-        pass
+        em = reaction.emoji
+        if em == "🇷":
+            self.next("", True)
+            return
+        self.next(
+            "a" if em == "🇦" else "b" if em == "🇧" else "c" if em == "🇨" else "d" if em == "🇩" else "e" if em == "🇪" else "f" if em == "🇫" else "g" if em == "🇬" else "h"
+        )
+
+
+class SelectMovePosColumn(State):
+    def __init__(self, game, selected_letter, position, selected_row):
+        super().__init__(GameState.SELECT_MOVE_POS_COL, game)
+        self.letter = selected_letter
+        self.position = position
+        self.selected_row = selected_row
+
+        self.cols = self.game.chess.get_figure_possible_moves_lines_in_row(
+            self.letter + self.position, self.selected_row
+        )
+
+        if len(self.cols) == 1:
+            self.next(self.cols[0])
+
+    def next(self, selected_col):
+        ExecuteSelectedMove(self.game, self.letter, self.position, self.selected_row + selected_col)
+
+    def get_embed_fields(self) -> List[Field]:
+        return [
+            Field(
+                name="Selected figure",
+                value="**" + letter_to_name(self.letter) + "** on **" + self.position + "**"
+            ),
+            Field(
+                name="** **",
+                value="Select the row, where you want your **" +
+                      letter_to_name(
+                          self.letter).lower() + "** to move to (Selected column: **" + self.selected_row + "**)",
+                inline=True
+            )
+        ]
+
+    def possible_emotes(self) -> list:
+        return [number_to_emoji(i) for i in self.cols]
+
+    def on_react(self, reaction: Reaction):
+        emotes = ["1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣"[i:i + 3] for i in range(0, 8 * 3, 3)]
+        self.next(str(emotes.index(reaction.emoji) + 1))
+
+
+class ExecuteSelectedMove(State):
+    def __init__(self, game, letter, position, move, option=""):
+        super().__init__(GameState.EXEC_MOVE, game)
+        self.game.chess.move(letter + position + move + option)
+        self.next()
+
+    def next(self, *args, **kwargs):
+        SelectFigureState(self.game)
