@@ -1,22 +1,9 @@
-from enum import Enum
 from typing import List
 
 from discord import Reaction
 
 from Chess.chess import letter_to_name
 from DiscordBot.utils import figure_to_emoji, letter_to_emoji, number_to_emoji
-
-
-class GameState(Enum):
-    SELECT_FIGURE_TYPE = 0
-    SELECT_FIGURE_POS_ROW = 1
-    SELECT_FIGURE_POS_COL = 2
-
-    SELECT_MOVE_POS_ROW = 3
-    SELECT_MOVE_POS_COL = 4
-
-    SELECT_PAWN_TRANSFORM = 5
-    EXEC_MOVE = 1000
 
 
 class Field:
@@ -27,8 +14,7 @@ class Field:
 
 
 class State:
-    def __init__(self, name: GameState, game):
-        self.name = name
+    def __init__(self, game):
         self.game = game
 
         state_cls = self
@@ -49,7 +35,7 @@ class State:
 
 class SelectFigureState(State):
     def __init__(self, game):
-        super().__init__(GameState.SELECT_FIGURE_TYPE, game)
+        super().__init__(game)
 
     def next(self, selected_letter: str):
         SelectFigureRow(self.game, selected_letter)
@@ -70,7 +56,7 @@ class SelectFigureState(State):
 
 class SelectFigureRow(State):
     def __init__(self, game, selected_letter: str):
-        super().__init__(GameState.SELECT_FIGURE_POS_ROW, game)
+        super().__init__(game)
         self.selected_letter = selected_letter
         self.rows = self.game.chess.get_rows_containing_movable_letter(selected_letter)
 
@@ -99,7 +85,7 @@ class SelectFigureRow(State):
 
 class SelectFigureColumn(State):
     def __init__(self, game, selected_letter: str, selected_row: str):
-        super().__init__(GameState.SELECT_FIGURE_POS_COL, game)
+        super().__init__(game)
         self.selected_letter = selected_letter
         self.selected_row = selected_row
 
@@ -127,7 +113,7 @@ class SelectFigureColumn(State):
 
 class SelectMovePosRow(State):
     def __init__(self, game, selected_letter: str, position: str):
-        super().__init__(GameState.SELECT_MOVE_POS_ROW, game)
+        super().__init__(game)
         self.selected_letter = selected_letter
         self.position = position
 
@@ -138,6 +124,8 @@ class SelectMovePosRow(State):
     def next(self, selected_row, castled: bool = False):
         if not castled:
             SelectMovePosColumn(self.game, self.selected_letter, self.position, selected_row)
+            return
+        SelectCastleMove(self.game, self.selected_letter, self.position)
 
     def get_embed_fields(self) -> List[Field]:
         l = [
@@ -176,9 +164,43 @@ class SelectMovePosRow(State):
         )
 
 
+class SelectCastleMove(State):
+    def __init__(self, game, letter, position):
+        super().__init__(game)
+        self.letter = letter
+        self.position = position
+
+    def next(self, side):
+        ExecuteSelectedMove(
+            self.game,
+            self.letter,
+            self.position,
+            "r" + (side.lower() if self.game.chess.get_turn() == "b" else side.upper())
+        )
+
+    def get_embed_fields(self) -> List[Field]:
+        return [
+            Field(
+                name="Selected figure",
+                value="**" + letter_to_name(self.letter) + "** on **" + self.position + "**"
+            ),
+            Field(
+                name="** **",
+                value="To castle on the **kingside**, select 🇰.\nTo castle on the queenside, select 🇶.",
+                inline=True
+            )
+        ]
+
+    def possible_emotes(self) -> list:
+        return ["🇰", "🇶"]
+
+    def on_react(self, reaction: Reaction):
+        self.next("q" if reaction.emoji == "🇶" else "k")
+
+
 class SelectMovePosColumn(State):
     def __init__(self, game, selected_letter, position, selected_row):
-        super().__init__(GameState.SELECT_MOVE_POS_COL, game)
+        super().__init__(game)
         self.letter = selected_letter
         self.position = position
         self.selected_row = selected_row
@@ -218,7 +240,7 @@ class SelectMovePosColumn(State):
 
 class ExecuteSelectedMove(State):
     def __init__(self, game, letter, position, move, option=""):
-        super().__init__(GameState.EXEC_MOVE, game)
+        super().__init__(game)
         self.game.chess.move(letter + position + move + option)
         self.next()
 
