@@ -56,20 +56,9 @@ class Game:
             }
         ])
 
-    async def check_won_and_update(self):
-        if self.chess.get_game_is_over():
-            await self.message.clear_reactions()
-            game: Game = self
-            remove_game(game)
-            await self.update_message([
-                {
-                    "name": "Game over!",
-                    "value": "__Cause__: " + self.chess.get_game_is_over_messsage(),
-                    "inline": False
-                }
-            ])
-            return True
-        return False
+    def delete(self):
+        game: Game = self
+        remove_game(game)
 
     def create_board(self):
         string = ":regional_indicator_a::regional_indicator_b::regional_indicator_c::regional_indicator_d::regional_indicator_e::regional_indicator_f::regional_indicator_g::regional_indicator_h:\n"

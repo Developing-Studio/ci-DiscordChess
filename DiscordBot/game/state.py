@@ -294,7 +294,20 @@ class ExecuteSelectedMove(State):
     def __init__(self, game, letter, position, move, option=""):
         super().__init__(game)
         self.game.chess.move(letter + position + move + option)
-        self.next()
+        self.gameover = self.game.chess.get_game_is_over()
+        self.next(self.gameover)
 
-    def next(self, *args, **kwargs):
-        SelectFigureState(self.game)
+    def next(self, end=False):
+        if not end:
+            SelectFigureState(self.game)
+            return
+
+    async def end_game(self):
+        self.game.delete()
+        await self.game.update_message([
+            {
+                "name": "Game Over!",
+                "value": "Cause: " + self.game.chess.get_game_is_over_messsage(),
+                "inline": False
+            }
+        ])

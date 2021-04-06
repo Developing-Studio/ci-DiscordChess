@@ -4,6 +4,7 @@ from discord import Reaction, Member, User, Message
 from discord.ext.commands import Cog, AutoShardedBot
 
 from DiscordBot.game.game import Game, get_game_by_message_id
+from DiscordBot.game.state import ExecuteSelectedMove
 
 
 class EmoteCog(Cog):
@@ -33,3 +34,7 @@ class EmoteCog(Cog):
 
         game.state.on_react(reaction)
         await game.on_state()
+
+        if isinstance(game.state, ExecuteSelectedMove):
+            if game.state.gameover:
+                await game.state.end_game()
