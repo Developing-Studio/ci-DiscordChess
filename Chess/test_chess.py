@@ -3,6 +3,7 @@ from time import time
 
 
 def performence_test(function, *args):
+    return
     t = time()
     function(*args)
     print(str(function.__name__) + ": " + str("{:f}".format(round(time() - t, 5))) + " Sekunden")
@@ -82,8 +83,8 @@ def print_fen(fen):
 
 
 g = ChessGame()
-# "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1"
-g.game = "k7/pp6/3Q4/8/8/8/8/3K4 w - - 0 1"
+g.game = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1"
+# g.game = "k7/pp6/3Q4/8/8/8/8/3K4 w - - 0 1"
 while True:
     print_fen(g.game)
     print(g.log)
@@ -98,3 +99,4 @@ while True:
     if len(g.get_figure_transormation_options(figure)) > 0:
         option = input(g.get_figure_transormation_options(figure))
     g.move(figure + move_row + move_line + option)
+    print(figure + move_row + move_line + option)
