@@ -26,6 +26,8 @@ class Game:
             [{"name": i.name, "value": i.value, "inline": i.inline} for i in self.state.get_embed_fields()]
         )
         await self.update_emotes(self.state.possible_emotes())
+        await self.message.add_reaction("❌")
+        await self.message.add_reaction("🤝")
 
     async def update_emotes(self, emotes: list):
         await self.message.clear_reactions()
