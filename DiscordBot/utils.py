@@ -49,6 +49,8 @@ def figure_to_emoji(figure: str, field_number: int):
 
 
 def letter_to_emoji(letter: str) -> str:
+    if letter.lower() == "r":
+        return "🇷"
     return f"🇦🇧🇨🇩🇪🇫🇬🇭"[ord(letter[0]) - ord("a")]
 
 

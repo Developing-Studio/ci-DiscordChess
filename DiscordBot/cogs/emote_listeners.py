@@ -3,7 +3,7 @@ from typing import Union
 from discord import Reaction, Member, User, Message
 from discord.ext.commands import Cog, AutoShardedBot
 
-from DiscordBot.game.game import Game, get_game_by_message_id, MoveState
+from DiscordBot.game.game import Game, get_game_by_message_id
 
 
 class EmoteCog(Cog):
@@ -23,39 +23,13 @@ class EmoteCog(Cog):
         if member.id != game.m1.id and member.id != game.m2.id:
             return
 
-        if reaction.emoji == "🤝":
-            if reaction.count == 3:
-                await game.remis()
-            return
-
         if game.get_current_member().id != member.id:
             await message.remove_reaction(reaction, member)
             return
 
-        if reaction.emoji == "❌":
-            await game.give_up()
+        if str(reaction.emoji) not in map(str, game.state.possible_emotes()):
+            await message.remove_reaction(reaction, member)
             return
 
-        if game.move_state == MoveState.SELECT_FIGURE:
-            game.move_state = MoveState.SELECT_FIGURE_ROW
-            await game.update_reactions(selected_figure=reaction.emoji.name[0])
-        elif game.move_state == MoveState.SELECT_FIGURE_ROW:
-            game.move_state = MoveState.SELECT_FIGURE_COLUMN
-            em = reaction.emoji
-            row = "a" if em == "🇦" else "b" if em == "🇧" else "c" if em == "🇨" else "d" if em == "🇩" else "e" if em == "🇪" else "f" if em == "🇫" else "g" if em == "🇬" else "h"
-            await game.update_reactions(select_figure_row=row)
-        elif game.move_state == MoveState.SELECT_FIGURE_COLUMN:
-            game.move_state = MoveState.SELECT_MOVE_POSITION_ROW
-            em = reaction.emoji
-            emotes = ["1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣"[i:i + 3] for i in range(0, 8 * 3, 3)]
-            await game.update_reactions(selected_figure_col=str(emotes.index(em) + 1))
-        elif game.move_state == MoveState.SELECT_MOVE_POSITION_ROW:
-            game.move_state = MoveState.SELECT_MOVE_POSITION_COLUMN
-            em = reaction.emoji
-            row = "a" if em == "🇦" else "b" if em == "🇧" else "c" if em == "🇨" else "d" if em == "🇩" else "e" if em == "🇪" else "f" if em == "🇫" else "g" if em == "🇬" else "h"
-            await game.update_reactions(select_move_row=row)
-        elif game.move_state == MoveState.SELECT_MOVE_POSITION_COLUMN:
-            game.move_state = MoveState.EXEC_MOVE
-            em = reaction.emoji
-            emotes = ["1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣"[i:i + 3] for i in range(0, 8 * 3, 3)]
-            await game.update_reactions(select_move_col=str(emotes.index(em) + 1))
+        game.state.on_react(reaction)
+        await game.on_state()
