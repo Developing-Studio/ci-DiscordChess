@@ -1,11 +1,12 @@
 from Chess.chess import *
 from time import time
+from random import choice
 
 
 def performence_test(function, *args):
-    t = time()
+    pt = time()
     function(*args)
-    print(str(function.__name__) + ": " + str("{:f}".format(round(time() - t, 5))) + " Sekunden")
+    print(str(function.__name__) + ": " + str("{:f}".format(round(time() - pt, 5))) + " Sekunden")
 
 
 performence_test(letter_to_name, "A")
@@ -81,20 +82,13 @@ def print_fen(fen):
         print()
 
 
-g = ChessGame()
-# "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1"
-g.game = "k7/pp6/3Q4/8/8/8/8/3K4 w - - 0 1"
-while True:
-    print_fen(g.game)
-    print(g.log)
+for _ in range(10):
+    t = time()
+    moves = 0
+    g = ChessGame()
+    while not g.get_game_is_over():
+        g.move(choice(g.get_all_possible_moves()))
+        moves += 1
+    print(str(moves) + " moves in " + str(time() - t) + " seconds")
+    print("(" + str((time() - t) / moves) + " seconds per move)")
     print(g.get_game_is_over_messsage())
-    letter = input(g.get_remaining_movable_letters())
-    row = input(g.get_rows_containing_movable_letter(letter))
-    line = input(g.get_lines_containing_movable_letter_in_row(letter, row))
-    figure = letter + row + line
-    move_row = input(g.get_figure_possible_moves_rows(figure))
-    move_line = input(g.get_figure_possible_moves_lines_in_row(figure, move_row))
-    option = ""
-    if len(g.get_figure_transormation_options(figure)) > 0:
-        option = input(g.get_figure_transormation_options(figure))
-    g.move(figure + move_row + move_line + option)
