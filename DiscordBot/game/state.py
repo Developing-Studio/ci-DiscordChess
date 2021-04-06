@@ -210,10 +210,16 @@ class SelectMovePosColumn(State):
         )
 
         if len(self.cols) == 1:
-            self.next(self.cols[0])
+            if self.letter.lower() != "p":
+                self.next(str(self.cols[0]))
+            else:
+                self.next(str(self.cols[0]), True if self.cols[0] in ["1", "8"] else False)
 
-    def next(self, selected_col):
-        ExecuteSelectedMove(self.game, self.letter, self.position, self.selected_row + selected_col)
+    def next(self, selected_col, transform=False):
+        if not transform:
+            ExecuteSelectedMove(self.game, self.letter, self.position, self.selected_row + selected_col)
+            return
+        PawnTransformationSelection(self.game, self.letter, self.position, self.selected_row + selected_col)
 
     def get_embed_fields(self) -> List[Field]:
         return [
@@ -235,7 +241,53 @@ class SelectMovePosColumn(State):
 
     def on_react(self, reaction: Reaction):
         emotes = ["1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣"[i:i + 3] for i in range(0, 8 * 3, 3)]
-        self.next(str(emotes.index(reaction.emoji) + 1))
+        col = emotes.index(reaction.emoji) + 1
+        if self.letter.lower() != "p":
+            self.next(str(col))
+        else:
+            self.next(str(col), True if col in ["1", "8"] else False)
+
+
+class PawnTransformationSelection(State):
+    def __init__(self, game, letter, position, move):
+        super().__init__(game)
+        self.letter = letter
+        self.position = position
+        self.move = move
+
+        self.transforms = self.game.chess.get_figure_transormation_options(letter + position)
+
+        if len(self.transforms) == 1:
+            self.next(self.transforms[0])
+
+    def next(self, transform):
+        ExecuteSelectedMove(
+            self.game,
+            self.letter,
+            self.position,
+            self.move,
+            transform.lower() if self.game.chess.get_turn() == "b" else transform.upper()
+        )
+
+    def get_embed_fields(self) -> List[Field]:
+        return [
+            Field(
+                name="Selected figure",
+                value="**" + letter_to_name(self.letter) + "** on **" + self.position + "**"
+            ),
+            Field(
+                name="** **",
+                value="Select the figure type your pawn shall become. "
+                      "Only those figures, which can move your next turn, are selectable",
+                inline=True
+            )
+        ]
+
+    def possible_emotes(self) -> list:
+        return [figure_to_emoji(i, 3) for i in self.transforms]
+
+    def on_react(self, reaction: Reaction):
+        self.next(reaction.emoji.name[0])
 
 
 class ExecuteSelectedMove(State):
