@@ -9,7 +9,14 @@ from DiscordBot.cogs import COGS
 from DiscordBot.color import Colors
 from DiscordBot.utils import add_cogs
 
-bot = AutoShardedBot(command_prefix="%")
+
+async def prefix(_, message):
+    if message.guild is None:
+        return ""
+    return "%", f"<@!{bot.user.id}> ", f"<@{bot.user.id}> "
+
+
+bot = AutoShardedBot(command_prefix=prefix, case_insensitive=True)
 bot.remove_command("help")
 
 
