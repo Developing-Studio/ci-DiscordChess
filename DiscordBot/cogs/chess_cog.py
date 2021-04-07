@@ -59,3 +59,8 @@ class ChessCog(Cog):
         if res is None:
             embed = Embed(description="You can't create another game with this player!", color=Colors.ERROR)
             await ctx.send(embed=embed)
+
+    @create.error
+    @load.error
+    async def on_error(self, ctx: Context, *args, **kwargs):
+        await ctx.send(embed=Embed(description="A required argument is missing!\nUse `%help` for more information", color=Colors.ERROR))
