@@ -1,3 +1,5 @@
+import os
+
 from discord.ext.commands import AutoShardedBot
 
 emojis: dict = {
@@ -56,7 +58,7 @@ def letter_to_emoji(letter: str) -> str:
 
 def number_to_emoji(number: str) -> str:
     n = int(number)
-    return ["1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣"[i:i + 3] for i in range(0, 8 * 3, 3)][n-1]
+    return ["1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣"[i:i + 3] for i in range(0, 8 * 3, 3)][n - 1]
 
 
 def get_letter_by_emote(emote: str) -> str:
@@ -68,3 +70,9 @@ def get_letter_by_emote(emote: str) -> str:
 def add_cogs(bot: AutoShardedBot, cogs):
     for cog_c in cogs:
         bot.add_cog(cog_c(bot))
+
+
+def delete_folder_contents(path: str):
+    path += "/" if path[-1] != "/" else ""
+    for f in os.listdir(path):
+        os.remove(path + f)

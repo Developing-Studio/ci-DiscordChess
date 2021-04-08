@@ -1,12 +1,12 @@
 from typing import List
 
-from discord import Member, Embed, Message
+from discord import Member, Embed, Message, File
 from discord.ext.commands import Context
 
-from Chess.chess import ChessGame, numbers_to_dashes
+from Chess.chess import ChessGame
 from DiscordBot.color import Colors
 from DiscordBot.game.state import SelectFigureState
-from DiscordBot.utils import figure_to_emoji
+from DiscordBot.image.generator import create_embed_image
 
 
 class Game:
@@ -17,11 +17,15 @@ class Game:
         self.chess = ChessGame()
         self.id = 0
         self.url = ""
+        self.img_url = ""
 
         game_cls = self
         self.state = SelectFigureState(game_cls)
 
     async def on_state(self):
+        if isinstance(self.state, SelectFigureState):
+            await self.create_board_image()
+
         await self.update_message(
             [{"name": i.name, "value": i.value, "inline": i.inline} for i in self.state.get_embed_fields()]
         )
@@ -62,25 +66,20 @@ class Game:
         game: Game = self
         remove_game(game)
 
-    def create_board(self):
-        string = ":regional_indicator_a::regional_indicator_b::regional_indicator_c::regional_indicator_d::regional_indicator_e::regional_indicator_f::regional_indicator_g::regional_indicator_h:\n"
-        white = True
-        row_i = 8
-        for row in self.chess.game.split()[0].split("/"):
-            row = numbers_to_dashes(row)
-            for figure in row:
-                string += figure_to_emoji(figure, white)
-                white = not white
-            string += ":%s:\n" % (
-                "eight" if row_i == 8 else "seven" if row_i == 7 else "six" if row_i == 6 else "five" if row_i == 5 else "four" if row_i == 4 else "three" if row_i == 3 else "two" if row_i == 2 else "one")
-            row_i -= 1
-            white = not white
+    async def create_board_image(self):
+        create_embed_image(self.chess.game, self.id)
+        file: File = File("./dist/" + str(self.id) + ".png")
+        board: Message = (await self.ctx.bot.get_channel(829727313130291200).send(file=file))
+        self.img_url = board.attachments[0].url
 
-        return string
-
-    def create_embed(self, additional_fields=None):
+    async def create_embed(self, additional_fields=None, on_create: bool = True):
         embed = Embed(title=self.name, color=Colors.GAME_DARK)
-        embed.description = self.create_board()
+
+        if not on_create:
+            if self.img_url == "":
+                await self.create_board_image()
+            embed.set_image(url=self.img_url)
+
         embed.add_field(name="Contestants", value="White: " + self.m1.mention + "\nBlack: " + self.m2.mention,
                         inline=False)
         embed.add_field(name="Who's turn?", value=self.chess.get_turn_name())
@@ -100,13 +99,14 @@ class Game:
         return embed
 
     async def update_message(self, additional_fields=None):
-        await self.message.edit(embed=self.create_embed(additional_fields))
+        await self.message.edit(embed=await self.create_embed(additional_fields, False))
 
     async def create_message(self, ctx: Context):
-        self.message: Message = await ctx.send(embed=self.create_embed())
-        await self.on_state()
+        self.ctx = ctx
+        self.message: Message = await ctx.send(embed=await self.create_embed())
         self.id = self.message.id
         self.url = self.message.jump_url
+        await self.on_state()
 
     def get_current_member(self):
         return self.m1 if self.chess.get_turn() == "w" else self.m2

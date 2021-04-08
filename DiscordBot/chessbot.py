@@ -7,7 +7,9 @@ from discord.ext.commands import AutoShardedBot, Context
 
 from DiscordBot.cogs import COGS
 from DiscordBot.color import Colors
-from DiscordBot.utils import add_cogs
+from DiscordBot.utils import add_cogs, delete_folder_contents
+
+delete_folder_contents("dist")
 
 
 async def prefix(_, message):
