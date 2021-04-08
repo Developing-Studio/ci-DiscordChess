@@ -53,7 +53,10 @@ async def help(ctx: Context):
                     value="To give up (it has to be your own turn), click :x:\nTo offer a draw, click on :handshake:. Both players have to react with :handshake: before the game goes along, otherwise, it is automatically denied.")
     embed.add_field(name="** **", value="** **", inline=False)
     embed.add_field(name="Source Code", value="[Github page](https://github.com/DiscordChess/DiscordChess)")
-    embed.add_field(name="** **", value="Used on `" + str(len(bot.guilds)) + "` servers.")
+    embed.add_field(name="Support", value="[DiscordChess Server](https://discord.gg/mbTm2Uruk4)")
+    embed.add_field(name="Invite this Bot",
+                    value="[Invite Link](https://discord.com/oauth2/authorize?client_id=827207000005541909&permissions=272448&scope=bot)")
+    embed.add_field(name="** **", value="Used on `" + str(len(bot.guilds)) + "` servers.", inline=False)
     embed.set_footer(text="Bot by ce_phox#1259 and n.ooaa.h#7721", icon_url=bot.user.avatar_url)
     await ctx.send(embed=embed)
 
